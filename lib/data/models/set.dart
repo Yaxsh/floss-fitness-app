@@ -13,11 +13,14 @@ class Set{
     required this.setId,
     required this.workoutId,
     required this.typeOfSet
-  }){ this.exercisesId = []; }
+  }){ exercisesId = []; }
 
-  Set.regularSet(int setId, int workoutId) : this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.set);
-  Set.superSet(int setId, int workoutId) : this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.superset);
-  Set.dropSet(int setId, int workoutId) : this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.dropset);
+  Set.regularSet(int setId, int workoutId) :
+        this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.set);
+  Set.superSet(int setId, int workoutId) :
+        this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.superset);
+  Set.dropSet(int setId, int workoutId) :
+        this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.dropset);
 }
 
 enum TypeOfSet{
