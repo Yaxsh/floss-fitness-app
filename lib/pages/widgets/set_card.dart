@@ -11,7 +11,8 @@ class SetCard extends StatefulWidget {
 
 class _SetCardState extends State<SetCard> {
 
-  static const List<String> items = <String>['One', 'Two', 'Three', 'Four'];
+  //todo: extract all exercises from DB
+  static const List<String> items = <String>['Deadlift', 'Squat', 'Bench', 'OHP'];
   String? selectedValue;
   final TextEditingController textEditingController = TextEditingController();
 
@@ -80,7 +81,7 @@ class _SetCardState extends State<SetCard> {
                 ),
               ),
               searchMatchFn: (item, searchValue) {
-                return (item.value.toString().contains(searchValue));
+                return (item.value.toString().toLowerCase().contains(searchValue.toLowerCase()));
               },
               //This to clear the search value when you close the menu
               onMenuStateChange: (isOpen) {
@@ -90,7 +91,24 @@ class _SetCardState extends State<SetCard> {
               },
             ),
           ),
-          const Divider(color: Colors.black,),
+          const Divider(color: Color.fromARGB(255, 89, 87, 87), indent: 5, endIndent: 5,),
+          Row(
+            children: const [
+              SizedBox(child: TextField(keyboardType: TextInputType.number,), width: 20,),
+              Text("kg x "),
+              SizedBox(child: TextField(keyboardType: TextInputType.number), width: 20,),
+              Text("reps."),
+            ],
+          ),
+          const Divider(color: Color.fromARGB(255, 89, 87, 87), indent: 5, endIndent: 5,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(onPressed: () {}, child: const Text("Elevated")),
+              TextButton(onPressed: () {}, child: const Text("Text")),
+              OutlinedButton(onPressed: () {}, child: const Text("Outlined")),
+            ],
+          ),
         ],
       ),
     );
