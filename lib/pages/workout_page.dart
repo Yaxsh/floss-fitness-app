@@ -1,6 +1,5 @@
-import 'package:floss_fitness_app/pages/widgets/custom_app_bar.dart';
+import 'package:floss_fitness_app/pages/widgets/custom_wigets.dart';
 import 'package:floss_fitness_app/pages/widgets/set_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class WorkoutPage extends StatefulWidget {
@@ -17,7 +16,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar.getAppBar(),
+      appBar: CustomWidgets.getAppBar(),
       drawer: const Drawer(),
       body: ListView(
         key: UniqueKey(),
@@ -25,14 +24,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
         children: setCardsList,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => tstfunc(),
+        onPressed: () => _addSet(),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  void tstfunc() {
+  void _addSet() {
     setCardsList.add(const SetCard());
     setState(() {});
   }

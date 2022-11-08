@@ -1,5 +1,5 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:floss_fitness_app/pages/widgets/custom_wigets.dart';
 import 'package:flutter/material.dart';
 
 class SetCard extends StatefulWidget {
@@ -10,11 +10,18 @@ class SetCard extends StatefulWidget {
 }
 
 class _SetCardState extends State<SetCard> {
-
   //todo: extract all exercises from DB
-  static const List<String> items = <String>['Deadlift', 'Squat', 'Bench', 'OHP'];
+  static List<String> items = <String>[
+    'Deadlift',
+    'Squat',
+    'Bench',
+    'OHP'
+  ];
   String? selectedValue;
   final TextEditingController textEditingController = TextEditingController();
+  List<Row> sets = [
+    CustomWidgets.getSetRow(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -29,22 +36,19 @@ class _SetCardState extends State<SetCard> {
                 'Select Item',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Theme
-                      .of(context)
-                      .hintColor,
+                  color: Theme.of(context).hintColor,
                 ),
               ),
               items: items
-                  .map((item) =>
-                  DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                        fontSize: 14,
-                      ),
-                    ),
-                  ))
+                  .map((item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ))
                   .toList(),
               value: selectedValue,
               onChanged: (value) {
@@ -81,9 +85,11 @@ class _SetCardState extends State<SetCard> {
                 ),
               ),
               searchMatchFn: (item, searchValue) {
-                return (item.value.toString().toLowerCase().contains(searchValue.toLowerCase()));
+                return (item.value
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchValue.toLowerCase()));
               },
-              //This to clear the search value when you close the menu
               onMenuStateChange: (isOpen) {
                 if (!isOpen) {
                   textEditingController.clear();
@@ -91,22 +97,28 @@ class _SetCardState extends State<SetCard> {
               },
             ),
           ),
-          const Divider(color: Color.fromARGB(255, 89, 87, 87), indent: 5, endIndent: 5,),
-          Row(
-            children: const [
-              SizedBox(child: TextField(keyboardType: TextInputType.number,), width: 20,),
-              Text("kg x "),
-              SizedBox(child: TextField(keyboardType: TextInputType.number), width: 20,),
-              Text("reps."),
-            ],
+          const Divider(
+            color: Color.fromARGB(255, 89, 87, 87),
+            indent: 5,
+            endIndent: 5,
           ),
-          const Divider(color: Color.fromARGB(255, 89, 87, 87), indent: 5, endIndent: 5,),
+          Padding(
+            padding: const EdgeInsets.only(left: 15),
+            child: ListView(
+              shrinkWrap: true,
+              children: sets,
+            ),
+          ),
+          const Divider(
+            color: Color.fromARGB(255, 89, 87, 87),
+            indent: 5,
+            endIndent: 5,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(onPressed: () {}, child: const Text("Elevated")),
-              TextButton(onPressed: () {}, child: const Text("Text")),
-              OutlinedButton(onPressed: () {}, child: const Text("Outlined")),
+              OutlinedButton(onPressed: _addNewSetRow, child: const Text("Add set")),
+              ElevatedButton(onPressed: () {print(sets.length);}, child: const Text("Finish exercise")),
             ],
           ),
         ],
@@ -118,5 +130,14 @@ class _SetCardState extends State<SetCard> {
   void dispose() {
     textEditingController.dispose();
     super.dispose();
+  }
+
+  _addNewSetRow() {
+    print("Added set!");
+    sets = [
+      ...sets,
+      CustomWidgets.getSetRow()
+    ];
+    setState(() {});
   }
 }

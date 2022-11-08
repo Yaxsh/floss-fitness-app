@@ -1,4 +1,4 @@
-import 'package:floss_fitness_app/pages/widgets/custom_app_bar.dart';
+import 'package:floss_fitness_app/pages/widgets/custom_wigets.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +13,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar.getAppBar(),
+      appBar: CustomWidgets.getAppBar(),
       drawer: const Drawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {print("clicked floating button")},
