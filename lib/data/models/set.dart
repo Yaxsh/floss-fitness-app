@@ -8,6 +8,7 @@ class Set{
   late DateTime startTimeOfSet;
   late DateTime endTimeOfSet;
   late TypeOfSet typeOfSet = TypeOfSet.set;
+  late String note;
 
   Set({
     required this.setId,

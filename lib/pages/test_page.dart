@@ -18,12 +18,12 @@ class _TestPageState extends State<TestPage> {
       body: Center(
         child: FutureBuilder<List<Map<String, Object?>>>(
           future: WorkoutDatabase.instance.getTestQuery(),
-          builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asnap){
-            if(!asnap.hasData || asnap.data?.length==0){
-              return Center(child: Text("no data"),);
+          builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asyncSnap){
+            if(!asyncSnap.hasData || asyncSnap.data?.length==0){
+              return const Center(child: Text("no data"),);
             }
             else{
-              return Center(child: Text(asnap.data.toString()),);
+              return Center(child: Text(asyncSnap.data.toString()),);
             }
           },
         ),
