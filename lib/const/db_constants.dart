@@ -15,7 +15,7 @@ class DbConstants{
   static const String SET_TABLE_NAME = "sets";
   static const String EXERCISE_TABLE_NAME = "exercises";
 
-  //create queries
+  //(C)reate queries
   static const String CREATE_WORKOUT_TABLE = '''CREATE TABLE $WORKOUT_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         start_date_time TEXT,
@@ -39,7 +39,7 @@ class DbConstants{
         is_compound INTEGER
   ) ''';
 
-  //insert queries
+  //(C)insert queries
   static String insertWorkoutQuery(Workout workout){
     String startTime = workout.startDateTime.toString();
     String endTime = workout.endDateTime.toString();

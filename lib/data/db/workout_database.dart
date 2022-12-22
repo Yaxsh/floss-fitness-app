@@ -43,4 +43,22 @@ class WorkoutDatabase{
     print('INSERTED');
     return await db.execute('INSERT INTO test_table(tst) VALUES (\'$tst2\');');
   }
+
+  //todo: uncomment queries after testing
+  // Future _onCreateWorkoutDatabase(Database db, int version) async {
+  //   await db.execute(DbConstants.CREATE_WORKOUT_TABLE);
+  //   await db.execute(DbConstants.CREATE_SET_TABLE);
+  //   await db.execute(DbConstants.CREATE_EXERCISE_TABLE);
+  // }
+
+  Future<Future<List<Map<String, Object?>>>> selectAllWorkouts() async{
+    Database db = await instance.database;
+    return db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time');
+  }
+
+  Future<bool> checkIfWorkoutInProgress() async{
+    Database db = await instance.database;
+    List<Map<String, Object?>> res =  await db.query(DbConstants.WORKOUT_TABLE_NAME, where: 'is_completed = 0');
+    return res.isNotEmpty;
+  }
 }
