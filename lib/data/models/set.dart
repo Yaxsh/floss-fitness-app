@@ -1,4 +1,4 @@
-class Set{
+class SetW{
   //primary keys
   late int setId;
   //foreign keys
@@ -8,20 +8,28 @@ class Set{
   late DateTime startTimeOfSet;
   late DateTime endTimeOfSet;
   late TypeOfSet typeOfSet = TypeOfSet.set;
+  late List<int> reps;
+  late List<int> weight;
   late String note;
 
-  Set({
+  SetW({
     required this.setId,
     required this.workoutId,
     required this.typeOfSet
   }){ exercisesId = []; }
 
-  Set.regularSet(int setId, int workoutId) :
+  SetW.regularSet(int setId, int workoutId) :
         this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.set);
-  Set.superSet(int setId, int workoutId) :
+  SetW.superSet(int setId, int workoutId) :
         this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.superset);
-  Set.dropSet(int setId, int workoutId) :
+  SetW.dropSet(int setId, int workoutId) :
         this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.dropset);
+
+  @override
+  String toString(){
+    return 'Set{setId: $setId, exercisesId: $exercisesId, startTimeOfSet: $startTimeOfSet, endTimeOfSet: $endTimeOfSet, typeOfSet: $typeOfSet '
+        'reps: $reps, weight: $weight, note: $note}';
+  }
 }
 
 enum TypeOfSet{
