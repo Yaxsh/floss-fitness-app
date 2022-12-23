@@ -1,4 +1,5 @@
 import 'package:floss_fitness_app/pages/widgets/custom_wigets.dart';
+import 'package:floss_fitness_app/pages/widgets/workout_card.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,13 +11,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  //todo: read workout from db, call selectAllWorkouts()!!
+  List<WorkoutCard> workoutCardList = [const WorkoutCard()];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomWidgets.getAppBar(),
       drawer: const Drawer(),
+      body: ListView(
+        key: UniqueKey(),
+        scrollDirection: Axis.vertical,
+        children: workoutCardList,
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {print("clicked floating button")},
+        onPressed: () => {print("clicked floating button!!")},
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
