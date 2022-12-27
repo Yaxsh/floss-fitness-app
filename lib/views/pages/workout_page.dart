@@ -1,5 +1,5 @@
-import 'package:floss_fitness_app/pages/widgets/custom_wigets.dart';
-import 'package:floss_fitness_app/pages/widgets/set_card.dart';
+import 'package:floss_fitness_app/views/widgets/custom_wigets.dart';
+import 'package:floss_fitness_app/views/widgets/set_card.dart';
 import 'package:flutter/material.dart';
 
 class WorkoutPage extends StatefulWidget {

@@ -1,6 +1,6 @@
-import 'package:floss_fitness_app/pages/home_page.dart';
-import 'package:floss_fitness_app/pages/test_page.dart';
-import 'package:floss_fitness_app/pages/workout_page.dart';
+import 'package:floss_fitness_app/views/pages/home_page.dart';
+import 'package:floss_fitness_app/views/pages/test_page.dart';
+import 'package:floss_fitness_app/views/pages/workout_page.dart';
 import 'package:flutter/material.dart';
 import 'const/constants.dart';
 

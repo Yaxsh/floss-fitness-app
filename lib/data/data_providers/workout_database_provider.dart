@@ -4,9 +4,9 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../const/db_constants.dart';
 
-class WorkoutDatabase{
-  WorkoutDatabase._privateConstructor();
-  static final WorkoutDatabase instance = WorkoutDatabase._privateConstructor();
+class WorkoutDatabaseProvider{
+  WorkoutDatabaseProvider._privateConstructor();
+  static final WorkoutDatabaseProvider instance = WorkoutDatabaseProvider._privateConstructor();
 
   static Database? _database;
   Future<Database> get database async => _database ??= await _initWorkoutDatabase();

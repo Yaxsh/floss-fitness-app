@@ -1,5 +1,5 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:floss_fitness_app/pages/widgets/custom_wigets.dart';
+import 'package:floss_fitness_app/views/widgets/custom_wigets.dart';
 import 'package:flutter/material.dart';
 
 class SetCard extends StatefulWidget {

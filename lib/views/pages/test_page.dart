@@ -1,8 +1,8 @@
-import 'package:floss_fitness_app/data/db/workout_database.dart';
-import 'package:floss_fitness_app/pages/widgets/custom_wigets.dart';
+import 'package:floss_fitness_app/data/data_providers/workout_database_provider.dart';
+import 'package:floss_fitness_app/views/widgets/custom_wigets.dart';
 import 'package:flutter/material.dart';
 
-import '../const/db_constants.dart';
+import '../../const/db_constants.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({Key? key}) : super(key: key);
@@ -19,7 +19,7 @@ class _TestPageState extends State<TestPage> {
       drawer: const Drawer(),
       body: Center(
         child: FutureBuilder<List<Map<String, Object?>>>(
-          future: WorkoutDatabase.instance.getTestQuery(),
+          future: WorkoutDatabaseProvider.instance.getTestQuery(),
           builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asyncSnap){
             if(!asyncSnap.hasData || asyncSnap.data?.length==0){
               return const Center(child: Text("no data!!"),);
@@ -31,7 +31,7 @@ class _TestPageState extends State<TestPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => { WorkoutDatabase.instance.insertTestQuery() },
+        onPressed: () => { WorkoutDatabaseProvider.instance.insertTestQuery() },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
