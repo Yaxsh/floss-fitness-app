@@ -1,8 +1,10 @@
 import 'package:floss_fitness_app/data/data_providers/workout_database_provider.dart';
+import 'package:floss_fitness_app/data/repository/workout_database_repository.dart';
 import 'package:floss_fitness_app/views/widgets/custom_wigets.dart';
 import 'package:flutter/material.dart';
 
 import '../../const/db_constants.dart';
+import '../../data/models/workout.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({Key? key}) : super(key: key);
@@ -12,6 +14,9 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
+
+  late Workout res;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,19 +24,22 @@ class _TestPageState extends State<TestPage> {
       drawer: const Drawer(),
       body: Center(
         child: FutureBuilder<List<Map<String, Object?>>>(
-          future: WorkoutDatabaseProvider.instance.getTestQuery(),
+          future: WorkoutDatabaseProvider.selectAllWorkouts(),
           builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asyncSnap){
-            if(!asyncSnap.hasData || asyncSnap.data?.length==0){
+            if(!asyncSnap.hasData){
               return const Center(child: Text("no data!!"),);
             }
             else{
-              return Center(child: Text(DbConstants.CREATE_SET_TABLE));
+              return Center(child: Text(asyncSnap.data.toString()));
             }
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => { WorkoutDatabaseProvider.instance.insertTestQuery() },
+        onPressed: () async => {
+          res = await WorkoutDatabaseRepository.createAndReturnNewWorkoutInDb(),
+          debugPrint(res.toString()),
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),

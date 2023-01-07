@@ -10,7 +10,7 @@ class SetCard extends StatefulWidget {
 }
 
 class _SetCardState extends State<SetCard> {
-  //todo: extract all exercises from DB
+  //todo: extract all exercises from DB in constructor in workout page
   static List<String> items = <String>[
     'Deadlift',
     'Squat',
@@ -22,6 +22,7 @@ class _SetCardState extends State<SetCard> {
   List<Row> sets = [
     CustomWidgets.getSetRow(),
   ];
+  //todo: add set id or similar to modify set dynamically
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:floss_fitness_app/data/models/workout.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../const/db_constants.dart';
@@ -14,7 +15,6 @@ class WorkoutDatabaseProvider{
   Future<Database> _initWorkoutDatabase() async {
     String databaseDirectory = await getDatabasesPath();
     String databasePath = join(databaseDirectory, DbConstants.DATABASE_NAME);
-    print('DATABASE PATH: $databasePath');
     Database database = await openDatabase(
         databasePath,
         version: 1,
@@ -25,35 +25,23 @@ class WorkoutDatabaseProvider{
     return database;
   }
 
-  Future _onCreateWorkoutDatabase(Database db, int version) async{
-    await db.execute('''CREATE TABLE test_table(
-          id INTEGER PRIMARY KEY,
-          tst TEXT
-    )''');
+  Future _onCreateWorkoutDatabase(Database db, int version) async {
+    await db.execute(DbConstants.CREATE_WORKOUT_TABLE);
+    await db.execute(DbConstants.CREATE_SET_TABLE);
+    await db.execute(DbConstants.CREATE_EXERCISE_TABLE);
   }
 
-  Future<List<Map<String, Object?>>> getTestQuery() async {
+  static Future<Map<String, Object?>> insertWorkoutAndReturn() async{
     Database db = await instance.database;
-    return await db.query('test_table', orderBy: 'tst');
+    Workout newWorkout = Workout.newWorkout();
+    await db.rawQuery(DbConstants.insertWorkoutQuery(newWorkout));
+    List<Map<String, Object?>> workouts =  await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'id');
+    return workouts.last;
   }
 
-  Future<void> insertTestQuery() async {
+  static Future<List<Map<String, Object?>>> selectAllWorkouts() async{
     Database db = await instance.database;
-    String tst2 = '1t1t1t1';
-    print('INSERTED');
-    return await db.execute('INSERT INTO test_table(tst) VALUES (\'$tst2\');');
-  }
-
-  //todo: uncomment queries after testing
-  // Future _onCreateWorkoutDatabase(Database db, int version) async {
-  //   await db.execute(DbConstants.CREATE_WORKOUT_TABLE);
-  //   await db.execute(DbConstants.CREATE_SET_TABLE);
-  //   await db.execute(DbConstants.CREATE_EXERCISE_TABLE);
-  // }
-
-  Future<Future<List<Map<String, Object?>>>> selectAllWorkouts() async{
-    Database db = await instance.database;
-    return db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time');
+    return await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time');
   }
 
   Future<bool> checkIfWorkoutInProgress() async{

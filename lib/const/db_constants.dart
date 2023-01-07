@@ -42,10 +42,10 @@ class DbConstants{
   //(C)insert queries
   static String insertWorkoutQuery(Workout workout){
     String startTime = workout.startDateTime.toString();
-    String endTime = workout.endDateTime.toString();
-    int isCompleted = workout.isCompleted ? 1 : 0;
-    return '''INSERT INTO $WORKOUT_TABLE_NAME(start_date, end_date, is_completed)
-              VALUES($startTime, $endTime, $isCompleted)''';
+    String endTime = workout.endDateTime == null ? "/" : workout.endDateTime.toString();
+    int isCompleted = workout.isCompleted;
+    return '''INSERT INTO $WORKOUT_TABLE_NAME(start_date_time, end_date_time, is_completed)
+              VALUES('$startTime', '$endTime', $isCompleted)''';
   }
 
   static String insertSetQuery(SetW set){
