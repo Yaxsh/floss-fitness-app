@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:floss_fitness_app/data/models/workout.dart';
-import '../../data/repository/workout_database_repository.dart';
-import '../state/workout_state.dart';
+import 'package:floss_fitness_app/data/repository/workout_database_repository.dart';
+import 'package:floss_fitness_app/bloc/state/workout_state.dart';
 
 class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
 
@@ -21,10 +20,8 @@ class WorkoutEvent{
 }
 
 enum EventType{
-  addExercise,
   addSet,
   modifySet,
   endSet,
-  endExercise,
   endWorkout
 }

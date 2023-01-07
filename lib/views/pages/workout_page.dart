@@ -16,6 +16,7 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
 
+  //todo: replace with reading from bloc state
   List<SetCard> setCardsList = [const SetCard()];
 
   @override
@@ -34,6 +35,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           children: setCardsList,
         ),
         floatingActionButton: FloatingActionButton(
+          //todo: add bloc event addExercise to onPressed
           onPressed: () => _addSet(),
           tooltip: 'Increment',
           child: const Icon(Icons.add),
