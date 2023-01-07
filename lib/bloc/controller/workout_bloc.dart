@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:floss_fitness_app/data/models/workout.dart';
 import '../../data/repository/workout_database_repository.dart';
 import '../state/workout_state.dart';
 

@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async => {
           newWorkout = await WorkoutDatabaseRepository.createAndReturnNewWorkoutInDb(),
-          Navigator.pushNamed(context, '/workout',)
+          Navigator.pushNamed(context, '/workout', arguments: newWorkout?.toMap())
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),

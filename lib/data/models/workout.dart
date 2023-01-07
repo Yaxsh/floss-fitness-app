@@ -25,9 +25,9 @@ class Workout{
   Map<String, Object?> toMap(){
     Map<String, Object?> map = Map();
     map.putIfAbsent('id', () => id);
-    map.putIfAbsent('startDateTime', () => startDateTime);
-    map.putIfAbsent('endDateTime', () => endDateTime);
-    map.putIfAbsent('isCompleted', () => isCompleted);
+    map.putIfAbsent('start_date_time', () => startDateTime);
+    map.putIfAbsent('end_date_time', () => endDateTime);
+    map.putIfAbsent('is_completed', () => isCompleted);
     return map;
   }
 }

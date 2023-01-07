@@ -1,9 +1,9 @@
+import 'dart:convert';
+
 import 'package:floss_fitness_app/data/data_providers/workout_database_provider.dart';
 import 'package:floss_fitness_app/data/repository/workout_database_repository.dart';
 import 'package:floss_fitness_app/views/widgets/custom_wigets.dart';
 import 'package:flutter/material.dart';
-
-import '../../const/db_constants.dart';
 import '../../data/models/workout.dart';
 
 class TestPage extends StatefulWidget {
@@ -19,6 +19,11 @@ class _TestPageState extends State<TestPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, Object?>;
+    print(arguments.toString());
+    print(arguments['start_date_time']);
+
     return Scaffold(
       appBar: CustomWidgets.getAppBar(),
       drawer: const Drawer(),
