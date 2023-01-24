@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:floss_fitness_app/bloc/state/workout_state.dart';
 import 'package:floss_fitness_app/views/widgets/custom_widgets.dart';
+import 'package:floss_fitness_app/views/widgets/set_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,7 +20,7 @@ class SetCard extends StatefulWidget {
     'OHP'
   ];
   //todo: replace with reading from bloc state
-  List<Row> sets = [CustomWidgets.getSetRow()];
+  List<SetRow> sets = [const SetRow(setId: 5)];
 
   @override
   State<SetCard> createState() => _SetCardState();

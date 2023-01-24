@@ -17,9 +17,6 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
 
-  //todo: replace with reading from bloc state
-  List<SetCard> setCardsList = [SetCard(workingExerciseId: 11)];
-
   @override
   Widget build(BuildContext context) {
     final pushedWorkoutArgument = ModalRoute.of(context)?.settings.arguments as Map<String, Object?>;
