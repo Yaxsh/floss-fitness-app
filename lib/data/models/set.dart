@@ -2,8 +2,7 @@ class SetW{
   //primary keys
   late int setId;
   //foreign keys
-  late int workoutId;
-  late List<int> exercisesId; //can add multiple exercises, intended for super sets
+  late int workingExercisesId; //can add multiple exercises, intended for super sets
   //properties
   late DateTime startTimeOfSet;
   late DateTime endTimeOfSet;
@@ -13,21 +12,40 @@ class SetW{
   late String note;
 
   SetW({
-    required this.setId,
-    required this.workoutId,
-    required this.typeOfSet
-  }){ exercisesId = []; }
+    required this.typeOfSet,
+    required this.workingExercisesId
+  }){
+    startTimeOfSet = DateTime.now();
+  }
 
-  SetW.regularSet(int setId, int workoutId) :
-        this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.set);
-  SetW.superSet(int setId, int workoutId) :
-        this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.superset);
-  SetW.dropSet(int setId, int workoutId) :
-        this(setId: setId, workoutId: workoutId, typeOfSet: TypeOfSet.dropset);
+  // SetW.regularSet(int workoutId) :
+  //       this(typeOfSet: TypeOfSet.set);
+  // SetW.superSet(int workoutId) :
+  //       this(typeOfSet: TypeOfSet.superset);
+  // SetW.dropSet(int workoutId) :
+  //       this(typeOfSet: TypeOfSet.dropset);
+  SetW.fromNewInsertMap(Map<String, Object?> map){
+    setId = map['id'] as int;
+    workingExercisesId = map['working_exercises_id'] as int;
+    startTimeOfSet = DateTime.parse(map['start_date_time'] as String);
+    // typeOfSet = map['type_of_set'] as TypeOfSet;
+    var writtenValueTypeOfSet = map['type_of_set'] as String;
+    switch(writtenValueTypeOfSet){
+      case 'TypeOfSet.superSet':
+        typeOfSet = TypeOfSet.superset;
+        break;
+      case 'TypeOfSet.dropSet':
+        typeOfSet = TypeOfSet.dropset;
+        break;
+      default:
+        typeOfSet = TypeOfSet.set;
+    }
+  }
+
 
   @override
   String toString(){
-    return 'Set{setId: $setId, exercisesId: $exercisesId, startTimeOfSet: $startTimeOfSet, endTimeOfSet: $endTimeOfSet, typeOfSet: $typeOfSet '
+    return 'Set{setId: $setId, exercisesId: $workingExercisesId, startTimeOfSet: $startTimeOfSet, endTimeOfSet: $endTimeOfSet, typeOfSet: $typeOfSet '
         'reps: $reps, weight: $weight, note: $note}';
   }
 }

@@ -1,4 +1,5 @@
 import 'package:floss_fitness_app/data/models/exercise.dart';
+import 'package:floss_fitness_app/data/models/working_exercise.dart';
 import 'package:floss_fitness_app/data/models/workout.dart';
 import 'package:floss_fitness_app/data/models/set.dart';
 
@@ -14,6 +15,7 @@ class DbConstants{
   static const String WORKOUT_TABLE_NAME = "workouts";
   static const String SET_TABLE_NAME = "sets";
   static const String EXERCISE_TABLE_NAME = "exercises";
+  static const String WORKING_EXERCISE_TABLE_NAME = "working_exercises";
 
   //(C)reate queries
   static const String CREATE_WORKOUT_TABLE = '''CREATE TABLE $WORKOUT_TABLE_NAME(
@@ -24,8 +26,7 @@ class DbConstants{
   ) ''';
   static const String CREATE_SET_TABLE = '''CREATE TABLE $SET_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        workout_id INTEGER,
-        exercises_id TEXT,
+        working_exercises_id INTEGER,
         start_date_time TEXT,
         end_date_time TEXT,
         type_of_set TEXT,
@@ -38,6 +39,10 @@ class DbConstants{
         name TEXT,
         is_compound INTEGER
   ) ''';
+  static const String CREATE_WORKING_EXERCISE_TABLE = '''CREATE TABLE $WORKING_EXERCISE_TABLE_NAME(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        exercise_id INTEGER
+  ) ''';
 
   //(C)insert queries
   static String insertWorkoutQuery(Workout workout){
@@ -49,16 +54,23 @@ class DbConstants{
   }
 
   static String insertSetQuery(SetW set){
-    int workoutId = set.workoutId;
-    String exerciseId = set.exercisesId.join(_multiValuesJoiner);
+    int workingExercisesId = set.workingExercisesId;
     String startTime = set.startTimeOfSet.toString();
     String endTime = set.endTimeOfSet.toString();
     String typeOfSet = set.typeOfSet.toString();
     String reps = set.reps.join(_multiValuesJoiner);
     String weight = set.weight.join(_multiValuesJoiner);
     String note = set.note;
-    return '''INSERT INTO $SET_TABLE_NAME(workout_id, exercises_id, start_date_time, end_date_time, type_of_set, reps, weight, note)
-              VALUES($workoutId, $exerciseId, $startTime, $endTime, $typeOfSet, $reps, $weight, $note)''';
+    return '''INSERT INTO $SET_TABLE_NAME(working_exercises_id, start_date_time, end_date_time, type_of_set, reps, weight, note)
+              VALUES($workingExercisesId, $startTime, $endTime, $typeOfSet, $reps, $weight, $note)''';
+  }
+
+  static String insertNewSetQuery(SetW set){
+    int workingExercisesId = set.workingExercisesId;
+    String startTime = set.startTimeOfSet.toString();
+    String typeOfSet = set.typeOfSet.toString();
+    return '''INSERT INTO $SET_TABLE_NAME(working_exercises_id, start_date_time, type_of_set)
+              VALUES($workingExercisesId, '$startTime', '$typeOfSet')''';
   }
 
   static String insertExerciseQuery(Exercise exercise){
@@ -66,5 +78,10 @@ class DbConstants{
     int isCompound = exercise.isCompound ? 1 : 0;
     return '''INSERT INTO $EXERCISE_TABLE_NAME(name, is_compound)
               VALUES($name, $isCompound)''';
+  }
+
+  static String insertNewWorkingExerciseQuery(){
+    return '''INSERT INTO $WORKING_EXERCISE_TABLE_NAME(exercise_id) 
+              VALUES(-1)''';
   }
 }

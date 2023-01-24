@@ -1,9 +1,11 @@
 import 'dart:async';
-
-import 'package:floss_fitness_app/data/models/workout.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import '../../const/db_constants.dart';
+import 'package:floss_fitness_app/data/models/workout.dart';
+import 'package:floss_fitness_app/const/db_constants.dart';
+
+import '../models/set.dart';
 
 class WorkoutDatabaseProvider{
   WorkoutDatabaseProvider._privateConstructor();
@@ -29,12 +31,13 @@ class WorkoutDatabaseProvider{
     await db.execute(DbConstants.CREATE_WORKOUT_TABLE);
     await db.execute(DbConstants.CREATE_SET_TABLE);
     await db.execute(DbConstants.CREATE_EXERCISE_TABLE);
+    await db.execute(DbConstants.CREATE_WORKING_EXERCISE_TABLE);
+    debugPrint("Installing dbs");
   }
 
   static Future<Map<String, Object?>> insertWorkoutAndReturn() async{
     Database db = await instance.database;
-    Workout newWorkout = Workout.newWorkout();
-    await db.rawQuery(DbConstants.insertWorkoutQuery(newWorkout));
+    await db.rawQuery(DbConstants.insertWorkoutQuery(Workout.newWorkout()));
     List<Map<String, Object?>> workouts =  await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'id');
     return workouts.last;
   }
@@ -48,5 +51,19 @@ class WorkoutDatabaseProvider{
     Database db = await instance.database;
     List<Map<String, Object?>> res =  await db.query(DbConstants.WORKOUT_TABLE_NAME, where: 'is_completed = 0');
     return res.isNotEmpty;
+  }
+
+  static Future<Map<String, Object?>> insertWorkoutExerciseAndReturn() async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.insertNewWorkingExerciseQuery());
+    List<Map<String, Object?>> workingExercises =  await db.query(DbConstants.WORKING_EXERCISE_TABLE_NAME, orderBy: 'id');
+    return workingExercises.last;
+  }
+
+  static Future<Map<String, Object?>> insertWorkoutSetAndReturn(SetW set) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.insertNewSetQuery(set));
+    List<Map<String, Object?>> workingExercises =  await db.query(DbConstants.SET_TABLE_NAME, orderBy: 'id');
+    return workingExercises.last;
   }
 }
