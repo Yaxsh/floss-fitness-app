@@ -1,4 +1,4 @@
-import 'package:floss_fitness_app/views/widgets/custom_widgets.dart';
+import 'package:floss_fitness_app/views/widgets/custom_static_widgets.dart';
 import 'package:floss_fitness_app/views/widgets/workout_card.dart';
 import 'package:flutter/material.dart';
 

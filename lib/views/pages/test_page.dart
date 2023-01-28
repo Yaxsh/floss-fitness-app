@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:floss_fitness_app/data/data_providers/workout_database_provider.dart';
 import 'package:floss_fitness_app/data/repository/workout_database_repository.dart';
-import 'package:floss_fitness_app/views/widgets/custom_widgets.dart';
+import 'package:floss_fitness_app/views/widgets/custom_static_widgets.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/workout.dart';
 

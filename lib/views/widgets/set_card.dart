@@ -1,11 +1,10 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:floss_fitness_app/bloc/state/workout_state.dart';
-import 'package:floss_fitness_app/views/widgets/custom_widgets.dart';
 import 'package:floss_fitness_app/views/widgets/set_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../bloc/controller/workout_bloc.dart';
+import '../../data/models/set.dart';
 
 class SetCard extends StatefulWidget {
   SetCard({Key? key, required this.workingExerciseId}) : super(key: key);
@@ -20,7 +19,7 @@ class SetCard extends StatefulWidget {
     'OHP'
   ];
   //todo: replace with reading from bloc state
-  List<SetRow> sets = [const SetRow(setId: 5)];
+
 
   @override
   State<SetCard> createState() => _SetCardState();
@@ -29,6 +28,7 @@ class SetCard extends StatefulWidget {
 class _SetCardState extends State<SetCard> {
 
   final TextEditingController textEditingController = TextEditingController();
+  // List<SetRow> sets = _getSetRowsFromState(BlocProvider.of<WorkoutBloc>(context).state);
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +115,7 @@ class _SetCardState extends State<SetCard> {
               padding: const EdgeInsets.only(left: 15),
               child: ListView(
                 shrinkWrap: true,
-                children: widget.sets,
+                children: _getSetRowsFromState(BlocProvider.of<WorkoutBloc>(context).state),
               ),
             ),
             const Divider(
@@ -126,12 +126,13 @@ class _SetCardState extends State<SetCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                OutlinedButton(onPressed: () {
-                  BlocProvider.of<WorkoutBloc>(context)
-                      .add(WorkoutEvent(eventType: EventType.addSetToWorkingExercise, workingExerciseId: widget.workingExerciseId));
+                OutlinedButton(onPressed: () async {
+                  BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.addSetToWorkingExercise, workingExerciseId: widget.workingExerciseId));
+                  await Future.delayed(const Duration(milliseconds: 500));
+                  setState(() {});
                 }, child: const Text("Add set")),
                 ElevatedButton(onPressed: () {
-                  BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkingExercise));
+                  BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkingExercise, workingExerciseId: widget.workingExerciseId));
                 },
                 child: const Text("Finish exercise")),
               ],
@@ -146,5 +147,15 @@ class _SetCardState extends State<SetCard> {
   void dispose() {
     textEditingController.dispose();
     super.dispose();
+  }
+
+  List<SetRow> _getSetRowsFromState(WorkoutState workoutState){
+    List<SetRow> setRows = [];
+    for(SetW set in workoutState.sets){
+      if(set.workingExercisesId == widget.workingExerciseId) {
+        setRows.add(SetRow(setId: set.setId));
+      }
+    }
+    return setRows;
   }
 }

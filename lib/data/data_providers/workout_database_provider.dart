@@ -53,10 +53,11 @@ class WorkoutDatabaseProvider{
     return res.isNotEmpty;
   }
 
-  static Future<Map<String, Object?>> insertWorkoutExerciseAndReturn() async {
+  static Future<Map<String, Object?>> insertWorkoutExerciseAndReturn(int workoutId) async {
     Database db = await instance.database;
-    await db.rawQuery(DbConstants.insertNewWorkingExerciseQuery());
+    await db.rawQuery(DbConstants.insertNewWorkingExerciseQuery(workoutId));
     List<Map<String, Object?>> workingExercises =  await db.query(DbConstants.WORKING_EXERCISE_TABLE_NAME, orderBy: 'id');
+    debugPrint("Returned list $workingExercises");
     return workingExercises.last;
   }
 
@@ -65,5 +66,19 @@ class WorkoutDatabaseProvider{
     await db.rawQuery(DbConstants.insertNewSetQuery(set));
     List<Map<String, Object?>> workingExercises =  await db.query(DbConstants.SET_TABLE_NAME, orderBy: 'id');
     return workingExercises.last;
+  }
+
+  static Future<Map<String, Object?>> endWorkoutExerciseAndReturn(int workingExerciseId) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.endWorkingExerciseQuery(workingExerciseId));
+    List<Map<String, Object?>> workingExercises =  await db.query(DbConstants.WORKING_EXERCISE_TABLE_NAME, where: 'id = ?', whereArgs: [workingExerciseId]);
+    return workingExercises.last;
+  }
+
+  static Future<Map<String, Object?>> endWorkoutSetAndReturn(int setId, int reps, int weight) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.endSetFromWorkingExerciseQuery(setId, reps, weight));
+    List<Map<String, Object?>> endedSets =  await db.query(DbConstants.SET_TABLE_NAME, where: 'id = ?', whereArgs: [setId]);
+    return endedSets.last;
   }
 }

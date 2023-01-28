@@ -2,6 +2,7 @@ import 'package:floss_fitness_app/data/models/exercise.dart';
 import 'package:floss_fitness_app/data/models/working_exercise.dart';
 import 'package:floss_fitness_app/data/models/workout.dart';
 import 'package:floss_fitness_app/data/models/set.dart';
+import 'package:flutter/cupertino.dart';
 
 class DbConstants{
 
@@ -27,11 +28,11 @@ class DbConstants{
   static const String CREATE_SET_TABLE = '''CREATE TABLE $SET_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         working_exercises_id INTEGER,
+        type_of_set TEXT,
         start_date_time TEXT,
         end_date_time TEXT,
-        type_of_set TEXT,
-        reps TEXT,
-        weight TEXT,
+        reps INTEGER,
+        weight INTEGER,
         note TEXT
   ) ''';
   static const String CREATE_EXERCISE_TABLE = '''CREATE TABLE $EXERCISE_TABLE_NAME(
@@ -41,7 +42,9 @@ class DbConstants{
   ) ''';
   static const String CREATE_WORKING_EXERCISE_TABLE = '''CREATE TABLE $WORKING_EXERCISE_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        exercise_id INTEGER
+        workout_id INTEGER,
+        exercise_id INTEGER,
+        is_completed INTEGER
   ) ''';
 
   //(C)insert queries
@@ -58,8 +61,8 @@ class DbConstants{
     String startTime = set.startTimeOfSet.toString();
     String endTime = set.endTimeOfSet.toString();
     String typeOfSet = set.typeOfSet.toString();
-    String reps = set.reps.join(_multiValuesJoiner);
-    String weight = set.weight.join(_multiValuesJoiner);
+    String reps = set.reps.toString();
+    String weight = set.weight.toString();
     String note = set.note;
     return '''INSERT INTO $SET_TABLE_NAME(working_exercises_id, start_date_time, end_date_time, type_of_set, reps, weight, note)
               VALUES($workingExercisesId, $startTime, $endTime, $typeOfSet, $reps, $weight, $note)''';
@@ -80,8 +83,23 @@ class DbConstants{
               VALUES($name, $isCompound)''';
   }
 
-  static String insertNewWorkingExerciseQuery(){
-    return '''INSERT INTO $WORKING_EXERCISE_TABLE_NAME(exercise_id) 
-              VALUES(-1)''';
+  static String insertNewWorkingExerciseQuery(int workoutId){
+    return '''INSERT INTO $WORKING_EXERCISE_TABLE_NAME(exercise_id, is_completed, workout_id) 
+              VALUES(-1, -1, $workoutId)''';
+  }
+
+  static String endWorkingExerciseQuery(int workingExerciseId){
+    //todo: update exercise_id from $EXERCISE_TABLE_NAME
+    return '''UPDATE $WORKING_EXERCISE_TABLE_NAME
+              SET is_completed = 1
+              WHERE id = $workingExerciseId''';
+  }
+
+  static String endSetFromWorkingExerciseQuery(int setId, int reps, int weight){
+    //todo: add note
+    DateTime temp = DateTime.now();
+    return '''UPDATE $SET_TABLE_NAME
+              SET reps = $reps, weight = $weight, end_date_time = '${temp.toString()}', note = 'no note todo'
+              WHERE id = $setId''';
   }
 }
