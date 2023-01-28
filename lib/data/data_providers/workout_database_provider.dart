@@ -81,4 +81,11 @@ class WorkoutDatabaseProvider{
     List<Map<String, Object?>> endedSets =  await db.query(DbConstants.SET_TABLE_NAME, where: 'id = ?', whereArgs: [setId]);
     return endedSets.last;
   }
+
+  static Future<Map<String, Object?>> endWorkoutAndReturn(int workoutId) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.endWorkoutQuery(workoutId));
+    List<Map<String, Object?>> endedWorkouts =  await db.query(DbConstants.WORKOUT_TABLE_NAME, where: 'id = ?', whereArgs: [workoutId]);
+    return endedWorkouts.last;
+  }
 }

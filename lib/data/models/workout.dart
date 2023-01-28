@@ -16,6 +16,12 @@ class Workout{
     startDateTime = DateTime.parse(map['start_date_time'].toString());
     isCompleted = map['is_completed'] as int;
   }
+  Workout.fromEndUpdateMap(Map<String, Object?> map){
+    id = map['id'] as int;
+    startDateTime = DateTime.parse(map['start_date_time'].toString());
+    endDateTime = DateTime.parse(map['end_date_time'].toString());
+    isCompleted = map['is_completed'] as int;
+  }
 
   @override
   String toString() {

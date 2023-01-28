@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:floss_fitness_app/data/models/set.dart';
 import 'package:floss_fitness_app/data/models/working_exercise.dart';
+import 'package:floss_fitness_app/data/models/workout.dart';
 import 'package:flutter/widgets.dart';
 import 'package:floss_fitness_app/data/repository/workout_database_repository.dart';
 import 'package:floss_fitness_app/bloc/state/workout_state.dart';
@@ -43,7 +44,9 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           state.workingExercises.insert(indexOfWorkingExercise, workingExercise);
           break;
         case EventType.endWorkout:
-          debugPrint("Ended workout");
+          debugPrint("Ended workout ${state.workout}");
+          Workout endedWorkout = await _workoutDatabaseRepository.endWorkout(state.workout.id!);
+          debugPrint("ENDED WORKOUT: $endedWorkout");
           break;
       }
     });

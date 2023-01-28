@@ -1,13 +1,11 @@
 import 'package:floss_fitness_app/data/models/exercise.dart';
-import 'package:floss_fitness_app/data/models/working_exercise.dart';
 import 'package:floss_fitness_app/data/models/workout.dart';
 import 'package:floss_fitness_app/data/models/set.dart';
-import 'package:flutter/cupertino.dart';
 
 class DbConstants{
 
   //general consts
-  static const String _multiValuesJoiner = " | ";
+  // static const String _multiValuesJoiner = " | ";
 
   //database
   static const String DATABASE_NAME = "fitnelly.db";
@@ -101,5 +99,12 @@ class DbConstants{
     return '''UPDATE $SET_TABLE_NAME
               SET reps = $reps, weight = $weight, end_date_time = '${temp.toString()}', note = 'no note todo'
               WHERE id = $setId''';
+  }
+
+  static String endWorkoutQuery(int workoutId) {
+    DateTime temp = DateTime.now();
+    return '''UPDATE $WORKOUT_TABLE_NAME
+              SET end_date_time = '${temp.toString()}', is_completed = 1
+              WHERE id = $workoutId''';
   }
 }

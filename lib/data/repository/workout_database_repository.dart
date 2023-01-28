@@ -31,4 +31,9 @@ class WorkoutDatabaseRepository{
     Map<String, Object?> endedSetFromWorkingExercise = await WorkoutDatabaseProvider.endWorkoutSetAndReturn(setId, reps, weight);
     return SetW.fromEndedSetMap(endedSetFromWorkingExercise);
   }
+
+  Future<Workout> endWorkout(int workoutId) async {
+    Map<String, Object?> endedWorkoutMap = await WorkoutDatabaseProvider.endWorkoutAndReturn(workoutId);
+    return Workout.fromEndUpdateMap(endedWorkoutMap);
+  }
 }
