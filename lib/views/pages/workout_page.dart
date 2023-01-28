@@ -16,7 +16,6 @@ class WorkoutPage extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
-
   @override
   Widget build(BuildContext context) {
     final pushedWorkoutArgument = ModalRoute.of(context)?.settings.arguments as Map<String, Object?>;
@@ -24,18 +23,24 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
     return BlocProvider(
       create: (context) => WorkoutBloc(WorkoutState(workout: newInsertedWorkout)),
-      child: Builder(
-        builder: (context) { return Scaffold(
+      child: Builder(builder: (context)  {
+        return Scaffold(
           appBar: AppBar(
             title: const Text(
-              Constants.titleOfApp, style: TextStyle(color: Colors.black, letterSpacing: 1.5),
+              Constants.titleOfApp,
+              style: TextStyle(color: Colors.black, letterSpacing: 1.5),
             ),
             actions: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(right: 20.0),
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkout));
+                    //todo: replace with popup to confirm
+                    await Future.delayed(const Duration(milliseconds: 200));
+                    if(BlocProvider.of<WorkoutBloc>(context).state.workout.isCompleted==1) {
+                      Navigator.pop(context);
+                    }
                   },
                   child: const Icon(
                     Icons.check,
@@ -49,25 +54,28 @@ class _WorkoutPageState extends State<WorkoutPage> {
           body: ListView(
             key: UniqueKey(),
             scrollDirection: Axis.vertical,
-            children: _getSetCardsFromState(BlocProvider.of<WorkoutBloc>(context).state),
+            children: _getSetCardsFromState(
+                BlocProvider.of<WorkoutBloc>(context).state),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-            BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.addWorkingExercise));
-            await Future.delayed(const Duration(milliseconds: 200));
-            setState(() {});
+              BlocProvider.of<WorkoutBloc>(context)
+                  .add(WorkoutEvent(eventType: EventType.addWorkingExercise));
+              await Future.delayed(const Duration(milliseconds: 200));
+              setState(() {});
             },
+            // onPressed: () {Navigator.pop(context);},
             tooltip: 'Add exercise',
             child: const Icon(Icons.add),
           ),
-        );}
-      ),
+        );
+      }),
     );
   }
 
-  List<SetCard> _getSetCardsFromState(WorkoutState workoutState){
+  List<SetCard> _getSetCardsFromState(WorkoutState workoutState) {
     List<SetCard> setCards = [];
-    for(WorkingExercise workingExercise in workoutState.workingExercises){
+    for (WorkingExercise workingExercise in workoutState.workingExercises) {
       setCards.add(SetCard(workingExerciseId: workingExercise.id));
     }
     return setCards;

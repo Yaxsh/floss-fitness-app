@@ -47,6 +47,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
         case EventType.endWorkout:
           Workout endedWorkout = await _workoutDatabaseRepository.endWorkout(state.workout.id!);
           debugPrint("ENDED WORKOUT: $endedWorkout");
+          state.workout = endedWorkout;
           break;
       }
     });
