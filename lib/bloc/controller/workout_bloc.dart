@@ -25,6 +25,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           state.sets.add(set);
           break;
         case EventType.endSetFromWorkingExercise:
+          //todo: add exercise id
           event = event as EndSetFromWorkingExerciseEvent;
           debugPrint("REPS: ${event.reps}");
           SetW returnedSet = await _workoutDatabaseRepository.endSetFromWorkingExercise(event.setId!, event.reps, event.weight);
@@ -44,7 +45,6 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           state.workingExercises.insert(indexOfWorkingExercise, workingExercise);
           break;
         case EventType.endWorkout:
-          debugPrint("Ended workout ${state.workout}");
           Workout endedWorkout = await _workoutDatabaseRepository.endWorkout(state.workout.id!);
           debugPrint("ENDED WORKOUT: $endedWorkout");
           break;

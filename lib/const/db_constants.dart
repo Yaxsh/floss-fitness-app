@@ -94,7 +94,7 @@ class DbConstants{
   }
 
   static String endSetFromWorkingExerciseQuery(int setId, int reps, int weight){
-    //todo: add note
+    //todo: add note and exercise id
     DateTime temp = DateTime.now();
     return '''UPDATE $SET_TABLE_NAME
               SET reps = $reps, weight = $weight, end_date_time = '${temp.toString()}', note = 'no note todo'

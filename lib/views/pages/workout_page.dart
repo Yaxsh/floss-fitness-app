@@ -1,9 +1,7 @@
 import 'package:floss_fitness_app/bloc/controller/workout_bloc.dart';
 import 'package:floss_fitness_app/bloc/state/workout_state.dart';
 import 'package:floss_fitness_app/data/models/working_exercise.dart';
-import 'package:floss_fitness_app/views/widgets/custom_static_widgets.dart';
 import 'package:floss_fitness_app/views/widgets/set_card.dart';
-import 'package:floss_fitness_app/views/widgets/workout_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -29,7 +27,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       child: Builder(
         builder: (context) { return Scaffold(
           appBar: AppBar(
-            title: Text(
+            title: const Text(
               Constants.titleOfApp, style: TextStyle(color: Colors.black, letterSpacing: 1.5),
             ),
             actions: <Widget>[
@@ -55,9 +53,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-            //todo: inspect why first set added is not shown immediately
             BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.addWorkingExercise));
-            await Future.delayed(const Duration(milliseconds: 500));
+            await Future.delayed(const Duration(milliseconds: 200));
             setState(() {});
             },
             tooltip: 'Add exercise',
