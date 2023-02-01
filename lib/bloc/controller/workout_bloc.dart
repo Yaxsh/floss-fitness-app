@@ -24,16 +24,24 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           set = await _workoutDatabaseRepository.addNewWorkingSet(set);
           state.sets.add(set);
           break;
+        case EventType.modifySetFromWorkingExercise:
+          //todo: add update to DB code to be able to end exercise without ending sets if not null
+          event = event as ModifySetFromWorkingExerciseEvent;
+          for(SetW set in state.sets){
+            if(set.setId == event.setId){
+              set.reps = event.reps;
+              set.weight = event.weight;
+            }
+          }
+          break;
         case EventType.endSetFromWorkingExercise:
           //todo: add exercise id
           event = event as EndSetFromWorkingExerciseEvent;
-          debugPrint("REPS: ${event.reps}");
           SetW returnedSet = await _workoutDatabaseRepository.endSetFromWorkingExercise(event.setId!, event.reps, event.weight);
-          debugPrint("Returned set: $returnedSet");
+          debugPrint(returnedSet.toString());
           break;
         case EventType.endWorkingExercise:
           WorkingExercise workingExercise = await _workoutDatabaseRepository.endWorkingExercise(event.workingExerciseId!);
-          debugPrint("Ended working ex: $workingExercise");
           int indexOfWorkingExercise = 0;
           for(WorkingExercise workingExerciseInLoop in state.workingExercises){
             if(workingExerciseInLoop.id == event.workingExerciseId){
@@ -46,7 +54,6 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           break;
         case EventType.endWorkout:
           Workout endedWorkout = await _workoutDatabaseRepository.endWorkout(state.workout.id!);
-          debugPrint("ENDED WORKOUT: $endedWorkout");
           state.workout = endedWorkout;
           break;
       }
@@ -65,9 +72,19 @@ class WorkoutEvent{
 enum EventType{
   addWorkingExercise,
   addSetToWorkingExercise,
+  modifySetFromWorkingExercise,
   endSetFromWorkingExercise,
   endWorkingExercise,
   endWorkout,
+}
+
+class ModifySetFromWorkingExerciseEvent extends WorkoutEvent{
+  final int reps;
+  final int weight;
+
+  ModifySetFromWorkingExerciseEvent({required super.eventType, required this.reps, required this.weight, setId}){
+    this.setId = setId;
+  }
 }
 
 class EndSetFromWorkingExerciseEvent extends WorkoutEvent{
@@ -77,5 +94,4 @@ class EndSetFromWorkingExerciseEvent extends WorkoutEvent{
   EndSetFromWorkingExerciseEvent({required super.eventType, required this.reps, required this.weight, setId}){
     this.setId = setId;
   }
-
 }

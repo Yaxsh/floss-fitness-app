@@ -153,7 +153,7 @@ class _SetCardState extends State<SetCard> {
     List<SetRow> setRows = [];
     for(SetW set in workoutState.sets){
       if(set.workingExercisesId == widget.workingExerciseId) {
-        setRows.add(SetRow(setId: set.setId));
+        setRows.add(SetRow(setId: set.setId, reps: set.reps, weight: set.weight));
       }
     }
     return setRows;

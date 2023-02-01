@@ -28,7 +28,8 @@ class SetW{
     setId = map['id'] as int;
     workingExercisesId = map['working_exercises_id'] as int;
     startTimeOfSet = DateTime.parse(map['start_date_time'] as String);
-    // typeOfSet = map['type_of_set'] as TypeOfSet;
+    reps = 0;
+    weight = 0;
     var writtenValueTypeOfSet = map['type_of_set'] as String;
     switch(writtenValueTypeOfSet){
       case 'TypeOfSet.superSet':
