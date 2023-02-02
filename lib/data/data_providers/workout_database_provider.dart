@@ -43,8 +43,13 @@ class WorkoutDatabaseProvider{
   }
 
   static Future<List<Map<String, Object?>>> selectAllWorkouts() async{
+    debugPrint("EXECUTED STATIC FUNC2!");
     Database db = await instance.database;
-    return await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time');
+    debugPrint(db.isOpen.toString());
+    //todo: select only finished workouts
+    List<Map<String, Object?>> workouts = await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time', where: 'is_completed = ?', whereArgs: [1]);
+    debugPrint(workouts.toString());
+    return workouts.reversed.toList();
   }
 
   Future<bool> checkIfWorkoutInProgress() async{
