@@ -29,13 +29,20 @@ class _HomePageState extends State<HomePage> {
         future: WorkoutDatabaseRepository.getAllFinishedWorkouts(),
         builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asyncSnap){
           if (asyncSnap.hasData) {
-            debugPrint("HAS DATA: ${asyncSnap.data}");
+            //todo: find more efficient way to keep track, state?
             List<Map<String, Object?>>? map = asyncSnap.data;
             for(Map<String, Object?> workoutMap in map!){
-              debugPrint("MAP IN FOR LOOP: $workoutMap");
               if(!workoutDisplayed.contains(workoutMap['id'] as int)) {
-                workoutCardList.add(WorkoutCard(workout: Workout.fromEndUpdateMap(workoutMap)));
-                workoutDisplayed.add(workoutMap['id'] as int);
+                Workout workoutToBeInserted = Workout.fromEndUpdateMap(workoutMap);
+                if(workoutCardList.isNotEmpty){
+                  workoutToBeInserted.startDateTime.isAfter(workoutCardList.first.workout.startDateTime) ?
+                  workoutCardList.insert(0, WorkoutCard(workout: workoutToBeInserted)) :
+                  workoutCardList.add(WorkoutCard(workout: workoutToBeInserted));
+                }
+                else{
+                  workoutCardList.add(WorkoutCard(workout: workoutToBeInserted));
+                }
+                workoutDisplayed.add( workoutMap['id'] as int);
               }
             }
           }
@@ -53,7 +60,8 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async => {
           newWorkout = await WorkoutDatabaseRepository.createAndReturnNewWorkoutInDb(),
-          Navigator.pushNamed(context, '/workout', arguments: newWorkout.toMap())
+          await Navigator.pushNamed(context, '/workout', arguments: newWorkout.toMap()),
+          setState((){})
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),

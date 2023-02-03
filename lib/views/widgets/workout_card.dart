@@ -29,7 +29,7 @@ class _WorkoutCardState extends State<WorkoutCard> {
           children: [
             //todo: replace values with workout model values after reading from DB and initializing
             Text(DateFormat('dd-MM-yyyy').format(widget.workout.startDateTime), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
-            Divider(color: Colors.black, height: 5),
+            const Divider(color: Colors.black, height: 5),
             Row(
               children: [
                 //todo: fix abomination

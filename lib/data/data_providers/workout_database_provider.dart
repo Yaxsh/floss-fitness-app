@@ -43,12 +43,9 @@ class WorkoutDatabaseProvider{
   }
 
   static Future<List<Map<String, Object?>>> selectAllWorkouts() async{
-    debugPrint("EXECUTED STATIC FUNC2!");
     Database db = await instance.database;
-    debugPrint(db.isOpen.toString());
     //todo: select only finished workouts
     List<Map<String, Object?>> workouts = await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time', where: 'is_completed = ?', whereArgs: [1]);
-    debugPrint(workouts.toString());
     return workouts.reversed.toList();
   }
 
@@ -62,7 +59,6 @@ class WorkoutDatabaseProvider{
     Database db = await instance.database;
     await db.rawQuery(DbConstants.insertNewWorkingExerciseQuery(workoutId));
     List<Map<String, Object?>> workingExercises =  await db.query(DbConstants.WORKING_EXERCISE_TABLE_NAME, orderBy: 'id');
-    debugPrint("Returned list $workingExercises");
     return workingExercises.last;
   }
 
