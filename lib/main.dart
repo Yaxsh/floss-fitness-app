@@ -1,3 +1,4 @@
+import 'package:floss_fitness_app/views/pages/exercises_details_page.dart';
 import 'package:floss_fitness_app/views/pages/home_page.dart';
 import 'package:floss_fitness_app/views/pages/test_page.dart';
 import 'package:floss_fitness_app/views/pages/workout_details_page.dart';
@@ -20,13 +21,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
-      initialRoute: '/',
+      initialRoute: '/exercise-details',
       routes: {
         '/': (context) => const HomePage(),
         '/workout': (context) => const WorkoutPage(),
+        'exercise-details': (context) => const ExercisesDetailsPage(),
         //todo: replace with pushNamed in workoutCard
         // '/workoutDetails': (context) => const WorkoutDetailsPage(),
-        '/test': (context) => const TestPage(),
       },
     );
   }

@@ -32,7 +32,9 @@ class _HomePageState extends State<HomePage> {
               child: Align(
                 alignment: Alignment.center,
                 child: GestureDetector(
-                    onTap: () {debugPrint("Clicked edit button");},
+                    onTap: () {
+                      Navigator.pushNamed(context, 'exercise-details');
+                    },
                     child: Text("Edit exercises")
                 )
               ),
