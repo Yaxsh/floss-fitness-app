@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
                 alignment: Alignment.center,
                 child: GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, 'exercise-details');
+                      Navigator.pushNamed(context, '/exercises');
                     },
                     child: Text("Edit exercises")
                 )

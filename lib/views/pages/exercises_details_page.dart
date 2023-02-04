@@ -13,8 +13,22 @@ class _ExercisesDetailsPageState extends State<ExercisesDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomWidgets.getAppBar(),
-      body: Center(
-        child: Text("exercise-details page")
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        //todo: center in cross axis
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text("Name: "),
+            ],
+          ),
+          Row(
+            children: [
+              Text("Is compound: "),
+            ],
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {debugPrint("ADD NEW EX");},
