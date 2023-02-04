@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/controller/workout_bloc.dart';
 import '../../data/models/set.dart';
 
-class SetCard extends StatefulWidget {
-  SetCard({Key? key, required this.workingExerciseId}) : super(key: key);
+class WorkingExerciseCard extends StatefulWidget {
+  WorkingExerciseCard({Key? key, required this.workingExerciseId}) : super(key: key);
 
   final int workingExerciseId;
   String? selectedValue;
@@ -22,10 +22,10 @@ class SetCard extends StatefulWidget {
 
 
   @override
-  State<SetCard> createState() => _SetCardState();
+  State<WorkingExerciseCard> createState() => _WorkingExerciseCardState();
 }
 
-class _SetCardState extends State<SetCard> {
+class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
 
   final TextEditingController textEditingController = TextEditingController();
   // List<SetRow> sets = _getSetRowsFromState(BlocProvider.of<WorkoutBloc>(context).state);

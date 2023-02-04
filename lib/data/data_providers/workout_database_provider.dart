@@ -44,9 +44,30 @@ class WorkoutDatabaseProvider{
 
   static Future<List<Map<String, Object?>>> selectAllWorkouts() async{
     Database db = await instance.database;
-    //todo: select only finished workouts
     List<Map<String, Object?>> workouts = await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time', where: 'is_completed = ?', whereArgs: [1]);
     return workouts.reversed.toList();
+  }
+
+  static Future<List<Map<String, Object?>>> selectAllSetsForWorkingExercise(int finishedWorkingExerciseId) async {
+    Database db = await instance.database;
+    List<Map<String, Object?>> finishedSets = await db.query(
+        DbConstants.SET_TABLE_NAME,
+        orderBy: 'start_date_time',
+        where: 'working_exercises_id = ?',
+        whereArgs: [finishedWorkingExerciseId]
+    );
+    return finishedSets;
+  }
+
+  static Future<List<Map<String, Object?>>> selectAllWorkingExercisesForWorkoutId(int workoutId) async {
+    Database db = await instance.database;
+    List<Map<String, Object?>> finishedWorkingExercisesForWorkoutId = await db.query(
+      DbConstants.WORKING_EXERCISE_TABLE_NAME,
+      orderBy: 'id',
+      where: 'workout_id = ?',
+      whereArgs: [workoutId]
+    );
+    return finishedWorkingExercisesForWorkoutId;
   }
 
   Future<bool> checkIfWorkoutInProgress() async{

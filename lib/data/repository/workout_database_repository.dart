@@ -43,4 +43,14 @@ class WorkoutDatabaseRepository{
     List<Map<String, Object?>> workoutsMap = await WorkoutDatabaseProvider.selectAllWorkouts();
     return workoutsMap;
   }
+
+  static Future<List<Map<String, Object?>>> getAllSetsForWorkingExercise(int finishedWorkingExerciseId) async {
+    List<Map<String, Object?>> setsListOfMaps = await WorkoutDatabaseProvider.selectAllSetsForWorkingExercise(finishedWorkingExerciseId);
+    return setsListOfMaps;
+  }
+
+  static Future<List<Map<String, Object?>>> getAllWorkingExercisesForWorkoutId(int workoutId) async {
+    List<Map<String, Object?>> workingExerciseListOfMaps = await WorkoutDatabaseProvider.selectAllWorkingExercisesForWorkoutId(workoutId);
+    return workingExerciseListOfMaps;
+  }
 }
