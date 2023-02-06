@@ -1,3 +1,4 @@
+import 'package:floss_fitness_app/data/models/exercise.dart';
 import 'package:floss_fitness_app/views/widgets/custom_static_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -9,31 +10,60 @@ class ExercisesDetailsPage extends StatefulWidget {
 }
 
 class _ExercisesDetailsPageState extends State<ExercisesDetailsPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController nameOfExerciseController =
+      TextEditingController();
+  late bool isCompound = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomWidgets.getAppBar(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        //todo: center in cross axis
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text("Name: "),
+      body: Form(
+        key: _formKey,
+        child: Padding(
+          padding: EdgeInsets.only(left: 15, right: 15, top: 15),
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            //todo: center in cross axis
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextFormField(
+                controller: nameOfExerciseController,
+                validator: (value) {
+                  //todo: check if name already exists
+                  if (value == null || value.isEmpty) {
+                    return "Please enter a valid name";
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(hintText: 'Name of exercise'),
+              ),
+              Row(
+                children: [
+                  Text("Is compound: "),
+                  Switch(
+                      value: isCompound,
+                      onChanged: (a) {
+                        setState(() {
+                          isCompound = a;
+                        });
+                      }),
+                ],
+              )
             ],
           ),
-          Row(
-            children: [
-              Text("Is compound: "),
-            ],
-          ),
-        ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {debugPrint("ADD NEW EX");},
+        onPressed: () {
+          if(_formKey.currentState!.validate()){
+            Exercise exercise = Exercise(name: nameOfExerciseController.text, isCompound: isCompound);
+            Navigator.pop(context);
+          }
+        },
         tooltip: 'Add a new exercise',
-        child: Icon(Icons.add),
+        child: Icon(Icons.check),
       ),
     );
   }
