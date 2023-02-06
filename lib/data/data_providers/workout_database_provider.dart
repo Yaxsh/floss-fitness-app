@@ -110,4 +110,18 @@ class WorkoutDatabaseProvider{
     List<Map<String, Object?>> endedWorkouts =  await db.query(DbConstants.WORKOUT_TABLE_NAME, where: 'id = ?', whereArgs: [workoutId]);
     return endedWorkouts.last;
   }
+
+  static insertExercise(String exerciseName, bool isCompound) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.insertExerciseQuery(exerciseName, isCompound));
+  }
+
+  static Future<List<Map<String, Object?>>> selectAllExercises() async {
+    Database db = await instance.database;
+    List<Map<String, Object?>> exerciseInDb = await db.query(
+        DbConstants.EXERCISE_TABLE_NAME,
+        orderBy: 'id',
+    );
+    return exerciseInDb;
+  }
 }

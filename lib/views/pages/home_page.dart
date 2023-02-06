@@ -48,8 +48,7 @@ class _HomePageState extends State<HomePage> {
             AsyncSnapshot<List<Map<String, Object?>>> asyncSnap) {
           if (asyncSnap.hasData) {
             //todo: find more efficient way to keep track, state?
-            List<Map<String, Object?>>? map = asyncSnap.data;
-            for (Map<String, Object?> workoutMap in map!) {
+            for (Map<String, Object?> workoutMap in asyncSnap.data!) {
               if (!workoutDisplayed.contains(workoutMap['id'] as int)) {
                 Workout workoutToBeInserted =
                     Workout.fromEndUpdateMap(workoutMap);

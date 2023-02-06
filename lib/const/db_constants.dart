@@ -74,11 +74,9 @@ class DbConstants{
               VALUES($workingExercisesId, '$startTime', '$typeOfSet')''';
   }
 
-  static String insertExerciseQuery(Exercise exercise){
-    String name = exercise.name;
-    int isCompound = exercise.isCompound ? 1 : 0;
+  static String insertExerciseQuery(String name, bool isCompound){
     return '''INSERT INTO $EXERCISE_TABLE_NAME(name, is_compound)
-              VALUES($name, $isCompound)''';
+              VALUES('$name', $isCompound)''';
   }
 
   static String insertNewWorkingExerciseQuery(int workoutId){

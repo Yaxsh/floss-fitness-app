@@ -2,6 +2,8 @@ import 'package:floss_fitness_app/data/models/exercise.dart';
 import 'package:floss_fitness_app/views/widgets/custom_static_widgets.dart';
 import 'package:flutter/material.dart';
 
+import '../../data/repository/workout_database_repository.dart';
+
 class ExercisesDetailsPage extends StatefulWidget {
   const ExercisesDetailsPage({Key? key}) : super(key: key);
 
@@ -56,9 +58,10 @@ class _ExercisesDetailsPageState extends State<ExercisesDetailsPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           if(_formKey.currentState!.validate()){
-            Exercise exercise = Exercise(name: nameOfExerciseController.text, isCompound: isCompound);
+            WorkoutDatabaseRepository.insertExercise(nameOfExerciseController.text, isCompound);
+            Future.delayed(const Duration(milliseconds: 200));
             Navigator.pop(context);
           }
         },
