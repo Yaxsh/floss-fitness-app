@@ -16,6 +16,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
     on<WorkoutEvent>((event, emit) async {
       switch (event.eventType) {
         case EventType.addWorkingExercise:
+          //todo: find better way to initialize exercises
+          state.exercises.addAll(await _workoutDatabaseRepository.getAllExerciseFromDbAsList());
           WorkingExercise workingExercise = await _workoutDatabaseRepository.addNewWorkingExercise(state.workout.id!);
           state.workingExercises.add(workingExercise);
           break;

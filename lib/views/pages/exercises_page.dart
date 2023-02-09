@@ -14,17 +14,25 @@ class ExercisesPage extends StatefulWidget {
 class _ExercisesPageState extends State<ExercisesPage> {
 
   List<ExerciseCard> exerciseCards = [];
+  //todo: replace with more efficient way of tracking, state?
+  List<int> exerciseIdDisplayed = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomWidgets.getAppBar(),
       body: FutureBuilder<List<Map<String, Object?>>>(
-          future: WorkoutDatabaseRepository.getAllExercise(),
+          future: WorkoutDatabaseRepository.getAllExerciseFromDBAsMaps(),
           builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asyncSnap) {
             if(asyncSnap.hasData) {
               for (Map<String, Object?> exerciseMap in asyncSnap.data!) {
-                exerciseCards.add(ExerciseCard(name: exerciseMap['name'].toString(), isCompound: exerciseMap['is_compound'] as int == 1 ? true : false));
+                debugPrint("MAP: $exerciseMap");
+                if(!exerciseIdDisplayed.contains(exerciseMap['id'] as int)) {
+                  exerciseCards.add(ExerciseCard(
+                      name: exerciseMap['name'].toString(),
+                      isCompound: exerciseMap['is_compound'] as int == 1 ? true : false));
+                  exerciseIdDisplayed.add(exerciseMap['id'] as int);
+                }
               }
               return ListView(
                 children: exerciseCards,

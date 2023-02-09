@@ -50,7 +50,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ],
           ),
-          drawer: const Drawer(),
+          // drawer: const Drawer(),
           body: ListView(
             key: UniqueKey(),
             scrollDirection: Axis.vertical,
@@ -75,7 +75,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
   List<WorkingExerciseCard> _getWorkingExerciseCardsFromState(WorkoutState workoutState) {
     List<WorkingExerciseCard> setCards = [];
     for (WorkingExercise workingExercise in workoutState.workingExercises) {
-      setCards.add(WorkingExerciseCard(workingExerciseId: workingExercise.id));
+      setCards.add(WorkingExerciseCard(
+          workingExerciseId: workingExercise.id,
+          exercises: workoutState.exercises)
+      );
     }
     return setCards;
   }

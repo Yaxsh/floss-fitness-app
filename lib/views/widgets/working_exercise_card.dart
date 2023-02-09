@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:floss_fitness_app/bloc/state/workout_state.dart';
+import 'package:floss_fitness_app/data/models/exercise.dart';
 import 'package:floss_fitness_app/views/widgets/set_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,19 +8,12 @@ import '../../bloc/controller/workout_bloc.dart';
 import '../../data/models/set.dart';
 
 class WorkingExerciseCard extends StatefulWidget {
-  WorkingExerciseCard({Key? key, required this.workingExerciseId}) : super(key: key);
+  WorkingExerciseCard({Key? key, required this.workingExerciseId, required this.exercises}) : super(key: key);
 
   final int workingExerciseId;
   String? selectedValue;
   //todo: extract all exercises from DB in constructor in workout page
-  List<String> exercises = <String>[
-    'Deadlift',
-    'Squat',
-    'Bench',
-    'OHP'
-  ];
-  //todo: replace with reading from bloc state
-
+  List<Exercise> exercises = [];
 
   @override
   State<WorkingExerciseCard> createState() => _WorkingExerciseCardState();
@@ -32,6 +26,7 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('WORKING EXERCISE ID: ${widget.workingExerciseId} AND LIST OF EX: ${widget.exercises}');
     return BlocListener<WorkoutBloc, WorkoutState>(
       listener: (context, state){},
       child: Container(
@@ -48,7 +43,7 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
                     color: Theme.of(context).hintColor,
                   ),
                 ),
-                items: widget.exercises
+                items: widget.exercises.map((e) => e.name).toList()
                     .map((item) => DropdownMenuItem<String>(
                           value: item,
                           child: Text(
