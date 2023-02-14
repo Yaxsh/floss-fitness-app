@@ -8,6 +8,8 @@ class FinishedWorkingExerciseCard extends StatefulWidget {
   const FinishedWorkingExerciseCard({Key? key, required this.finishedWorkingExercise}) : super(key: key);
 
   final WorkingExercise finishedWorkingExercise;
+  //todo: get from constructor
+  final String exerciseName = "TODO";
 
   @override
   State<FinishedWorkingExerciseCard> createState() => _FinishedWorkingExerciseCardState();
@@ -21,7 +23,7 @@ class _FinishedWorkingExerciseCardState extends State<FinishedWorkingExerciseCar
       color: Colors.grey,
       child: Column(
         children: [
-          Text("exercise"),
+          Text(widget.exerciseName),
           const Divider(
             color: Colors.black,
             indent: 5,
@@ -29,20 +31,22 @@ class _FinishedWorkingExerciseCardState extends State<FinishedWorkingExerciseCar
           ),
           Padding(
             padding: const EdgeInsets.only(left: 15),
-            //todo: replace future building with arguments in constructor because of incorrect behavior
-            child: FutureBuilder(
+            //todo: use multi-future builder to get exercise name, or retrieve exercises beforehand
+            child: FutureBuilder<List<Map<String, Object?>>>(
                 future: WorkoutDatabaseRepository.getAllSetsForWorkingExercise(widget.finishedWorkingExercise.id),
                 builder: (BuildContext buildContext,AsyncSnapshot<List<Map<String, Object?>>> asyncSnap) {
                   if(asyncSnap.hasData){
-                    debugPrint("DATA ON FINISHED SETS FOR WORKING EXERCISE ${widget.finishedWorkingExercise.id} : ${asyncSnap.data}");
+                    return ListView(
+                      shrinkWrap: true,
+                      children: _getSetRowsFromDB(asyncSnap.data),
+                    );
                   }
                   else{
-                    debugPrint("NO DATA FOR WORKING EXERCISE ${widget.finishedWorkingExercise.id}");
+                    return ListView(
+                      shrinkWrap: true,
+                      children: const [], //FinishedSetRow(reps: 0, weight: 0)
+                    );
                   }
-                  return ListView(
-                    shrinkWrap: true,
-                    children: _getSetRowsFromDB(asyncSnap.data),
-                  );
                 }
             ),
           ),

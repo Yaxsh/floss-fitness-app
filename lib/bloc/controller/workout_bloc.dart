@@ -17,7 +17,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
       switch (event.eventType) {
         case EventType.addWorkingExercise:
           //todo: find better way to initialize exercises
-          state.exercises.addAll(await _workoutDatabaseRepository.getAllExerciseFromDbAsList());
+          if(!state.isExerciseListRead) {
+            state.exercises.addAll(await _workoutDatabaseRepository.getAllExerciseFromDbAsList());
+            state.isExerciseListRead = true;
+          }
           WorkingExercise workingExercise = await _workoutDatabaseRepository.addNewWorkingExercise(state.workout.id!);
           state.workingExercises.add(workingExercise);
           break;
@@ -42,8 +45,27 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           SetW returnedSet = await _workoutDatabaseRepository.endSetFromWorkingExercise(event.setId!, event.reps, event.weight);
           debugPrint(returnedSet.toString());
           break;
+        case EventType.modifyWorkingExercise:
+          var event1 = event as ModifyWorkingExerciseEvent;
+          debugPrint('MODIFIED WORKING EX!!: ${event1.exerciseName!} WITH ID ${event1.workingExerciseId}');
+          //todo: make sure name of exercise is unique
+          state.workingExercises.where((workingExercise) => workingExercise.id==event1.workingExerciseId).first.exerciseId =
+            state.exercises.where((element) => element.name == event1.exerciseName!).first.exerciseId!;
+          debugPrint('wok after update ${state.workingExercises}');
+          state.nameOfWorkingExerciseByName.update(event1.workingExerciseId!, (value) => event1.exerciseName, ifAbsent: () => event1.exerciseName);
+          debugPrint('state.nameOfWorkingExerciseByName: ${state.nameOfWorkingExerciseByName}');
+          break;
         case EventType.endWorkingExercise:
-          WorkingExercise workingExercise = await _workoutDatabaseRepository.endWorkingExercise(event.workingExerciseId!);
+          // var castedEvent = event as EndWorkingExerciseEvent;
+          // debugPrint("RECEIVED ENDWORKINGEVENT: ${castedEvent.exerciseName}");
+          // int exerciseId = state.exercises.where((e) => e.name==castedEvent.exerciseName).toString() as int;
+          int exerciseId = -1;
+          for(WorkingExercise workingExerciseInState in state.workingExercises){
+            if(event.workingExerciseId! == workingExerciseInState.id){
+              exerciseId = workingExerciseInState.exerciseId;
+            }
+          }
+          WorkingExercise workingExercise = await _workoutDatabaseRepository.endWorkingExercise(event.workingExerciseId!, exerciseId);
           int indexOfWorkingExercise = 0;
           for(WorkingExercise workingExerciseInLoop in state.workingExercises){
             if(workingExerciseInLoop.id == event.workingExerciseId){
@@ -76,6 +98,7 @@ enum EventType{
   addSetToWorkingExercise,
   modifySetFromWorkingExercise,
   endSetFromWorkingExercise,
+  modifyWorkingExercise,
   endWorkingExercise,
   endWorkout,
 }
@@ -96,4 +119,10 @@ class EndSetFromWorkingExerciseEvent extends WorkoutEvent{
   EndSetFromWorkingExerciseEvent({required super.eventType, required this.reps, required this.weight, setId}){
     this.setId = setId;
   }
+}
+
+class ModifyWorkingExerciseEvent extends WorkoutEvent{
+  final String exerciseName;
+
+  ModifyWorkingExerciseEvent({required super.eventType, required super.workingExerciseId, required this.exerciseName});
 }

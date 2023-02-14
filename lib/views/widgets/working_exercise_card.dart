@@ -8,7 +8,7 @@ import '../../bloc/controller/workout_bloc.dart';
 import '../../data/models/set.dart';
 
 class WorkingExerciseCard extends StatefulWidget {
-  WorkingExerciseCard({Key? key, required this.workingExerciseId, required this.exercises}) : super(key: key);
+  WorkingExerciseCard({Key? key, required this.workingExerciseId, required this.exercises, this.selectedValue}) : super(key: key);
 
   final int workingExerciseId;
   String? selectedValue;
@@ -27,6 +27,7 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
   @override
   Widget build(BuildContext context) {
     debugPrint('WORKING EXERCISE ID: ${widget.workingExerciseId} AND LIST OF EX: ${widget.exercises}');
+    debugPrint('SELECTED VALUE: ${widget.selectedValue} FOR ID ${widget.workingExerciseId}');
     return BlocListener<WorkoutBloc, WorkoutState>(
       listener: (context, state){},
       child: Container(
@@ -56,6 +57,9 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
                     .toList(),
                 value: widget.selectedValue,
                 onChanged: (value) {
+                  debugPrint("SELECTED EXER : $value");
+                  //todo: sent event to modify working exercise
+                  BlocProvider.of<WorkoutBloc>(context).add(ModifyWorkingExerciseEvent(eventType: EventType.modifyWorkingExercise, workingExerciseId: widget.workingExerciseId, exerciseName: value!));
                   setState(() {
                     widget.selectedValue = value as String;
                   });
@@ -126,10 +130,11 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
                   await Future.delayed(const Duration(milliseconds: 500));
                   setState(() {});
                 }, child: const Text("Add set")),
-                ElevatedButton(onPressed: () {
-                  BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkingExercise, workingExerciseId: widget.workingExerciseId));
-                },
-                child: const Text("Finish exercise")),
+                ElevatedButton(
+                  onPressed: () {
+                    BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkingExercise, workingExerciseId: widget.workingExerciseId));
+                  },
+                  child: const Text("Finish exercise")),
               ],
             ),
           ],

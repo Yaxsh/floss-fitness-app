@@ -90,9 +90,9 @@ class WorkoutDatabaseProvider{
     return workingExercises.last;
   }
 
-  static Future<Map<String, Object?>> endWorkoutExerciseAndReturn(int workingExerciseId) async {
+  static Future<Map<String, Object?>> endWorkoutExerciseAndReturn(int workingExerciseId, int exerciseId) async {
     Database db = await instance.database;
-    await db.rawQuery(DbConstants.endWorkingExerciseQuery(workingExerciseId));
+    await db.rawQuery(DbConstants.endWorkingExerciseQuery(workingExerciseId, exerciseId));
     List<Map<String, Object?>> workingExercises =  await db.query(DbConstants.WORKING_EXERCISE_TABLE_NAME, where: 'id = ?', whereArgs: [workingExerciseId]);
     return workingExercises.last;
   }

@@ -30,8 +30,8 @@ class WorkoutDatabaseRepository{
     return exercisesList;
   }
 
-  Future<WorkingExercise> endWorkingExercise(int workingExerciseId) async {
-    Map<String, Object?> insertedWorkingExercise = await WorkoutDatabaseProvider.endWorkoutExerciseAndReturn(workingExerciseId);
+  Future<WorkingExercise> endWorkingExercise(int workingExerciseId, int exerciseId) async {
+    Map<String, Object?> insertedWorkingExercise = await WorkoutDatabaseProvider.endWorkoutExerciseAndReturn(workingExerciseId, exerciseId);
     return WorkingExercise.fromNewInsertMap(insertedWorkingExercise);
   }
 

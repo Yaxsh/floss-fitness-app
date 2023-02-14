@@ -7,11 +7,14 @@ class WorkoutState{
   late Workout workout;
   late List<SetW> sets;
   late List<WorkingExercise> workingExercises;
+  Map<int, String> nameOfWorkingExerciseByName = <int, String>{};
   List<Exercise> exercises = [];
+  late bool isExerciseListRead;
 
   WorkoutState({required this.workout}){
     sets = [];
     //todo: add a working exercise by default
     workingExercises = [];
+    isExerciseListRead = false;
   }
 }

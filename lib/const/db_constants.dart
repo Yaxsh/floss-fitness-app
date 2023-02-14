@@ -84,10 +84,10 @@ class DbConstants{
               VALUES(-1, -1, $workoutId)''';
   }
 
-  static String endWorkingExerciseQuery(int workingExerciseId){
+  static String endWorkingExerciseQuery(int workingExerciseId, int exerciseId){
     //todo: update exercise_id from $EXERCISE_TABLE_NAME
     return '''UPDATE $WORKING_EXERCISE_TABLE_NAME
-              SET is_completed = 1
+              SET is_completed = 1, exercise_id = $exerciseId
               WHERE id = $workingExerciseId''';
   }
 

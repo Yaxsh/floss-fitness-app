@@ -73,13 +73,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   List<WorkingExerciseCard> _getWorkingExerciseCardsFromState(WorkoutState workoutState) {
-    List<WorkingExerciseCard> setCards = [];
+    List<WorkingExerciseCard> workingExerciseCards = [];
     for (WorkingExercise workingExercise in workoutState.workingExercises) {
-      setCards.add(WorkingExerciseCard(
+      String? selectedExercise = workoutState.nameOfWorkingExerciseByName[workingExercise.id];
+      workingExerciseCards.add(WorkingExerciseCard(
           workingExerciseId: workingExercise.id,
-          exercises: workoutState.exercises)
+          exercises: workoutState.exercises,
+          selectedValue: selectedExercise,
+        ),
       );
     }
-    return setCards;
+    return workingExerciseCards;
   }
 }
