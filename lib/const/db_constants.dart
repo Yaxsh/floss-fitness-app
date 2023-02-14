@@ -105,4 +105,11 @@ class DbConstants{
               SET end_date_time = '${temp.toString()}', is_completed = 1
               WHERE id = $workoutId''';
   }
+
+  static String selectWorkingExercisesWithName(int workoutId){
+    return '''SELECT $WORKING_EXERCISE_TABLE_NAME.id, $WORKING_EXERCISE_TABLE_NAME.exercise_id, $WORKING_EXERCISE_TABLE_NAME.workout_id, $EXERCISE_TABLE_NAME.name
+              FROM $WORKING_EXERCISE_TABLE_NAME
+              INNER JOIN $EXERCISE_TABLE_NAME ON $WORKING_EXERCISE_TABLE_NAME.exercise_id=$EXERCISE_TABLE_NAME.id
+              WHERE $WORKING_EXERCISE_TABLE_NAME.workout_id=$workoutId''';
+  }
 }

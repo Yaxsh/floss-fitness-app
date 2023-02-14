@@ -5,11 +5,11 @@ import '../../data/repository/workout_database_repository.dart';
 import 'finished_set_row.dart';
 
 class FinishedWorkingExerciseCard extends StatefulWidget {
-  const FinishedWorkingExerciseCard({Key? key, required this.finishedWorkingExercise}) : super(key: key);
+  FinishedWorkingExerciseCard({Key? key, required this.finishedWorkingExercise, required this.exerciseName}) : super(key: key);
 
   final WorkingExercise finishedWorkingExercise;
   //todo: get from constructor
-  final String exerciseName = "TODO";
+  String exerciseName = "TODO";
 
   @override
   State<FinishedWorkingExerciseCard> createState() => _FinishedWorkingExerciseCardState();
@@ -23,7 +23,7 @@ class _FinishedWorkingExerciseCardState extends State<FinishedWorkingExerciseCar
       color: Colors.grey,
       child: Column(
         children: [
-          Text(widget.exerciseName),
+          Text(widget.exerciseName ?? "TODO"),
           const Divider(
             color: Colors.black,
             indent: 5,

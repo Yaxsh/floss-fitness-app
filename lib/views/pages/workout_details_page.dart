@@ -23,11 +23,11 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
       appBar: CustomWidgets.getAppBar(),
       //todo: replace single future with multiple futures because future in FinishedWorkingExerciseCard is stopping the render process
       body: FutureBuilder<List<Map<String, Object?>>>(
-        future: WorkoutDatabaseRepository.getAllWorkingExercisesForWorkoutId(widget.workout.id!),
+        future: WorkoutDatabaseRepository.selectWorkingExAndJoinName(widget.workout.id!),
         builder: (BuildContext buildContext,AsyncSnapshot<List<Map<String, Object?>>> asyncSnap) {
           if(!asyncSnap.hasData || asyncSnap.data == null) {
             debugPrint('ENTERING NULL IF');
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           else{
             debugPrint('ENTERING ELSE NON-NULL, DATA: ${asyncSnap.data}');
@@ -45,7 +45,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
   List<FinishedWorkingExerciseCard> _getFinishedWorkingExerciseCardsFromDB(List<Map<String, Object?>> workingExercisesListOfMaps){
     List<FinishedWorkingExerciseCard> finishedWorkingExerciseCards = [];
     for(Map<String, Object?> workingExerciseMap in workingExercisesListOfMaps){
-      finishedWorkingExerciseCards.add(FinishedWorkingExerciseCard(finishedWorkingExercise: WorkingExercise.fromEndedUpdateMap(workingExerciseMap)));
+      finishedWorkingExerciseCards.add(FinishedWorkingExerciseCard(finishedWorkingExercise: WorkingExercise.fromEndedUpdateMap(workingExerciseMap), exerciseName: workingExerciseMap['name'].toString(),));
     }
     return finishedWorkingExerciseCards;
   }

@@ -48,6 +48,14 @@ class WorkoutDatabaseProvider{
     return workouts.reversed.toList();
   }
 
+  static Future<List<Map<String, Object?>>> selectWorkingExAndJoinName(int workoutId) async{
+    Database db = await instance.database;
+    print(DbConstants.selectWorkingExercisesWithName(workoutId));
+    List<Map<String, Object?>> wok = await db.rawQuery(DbConstants.selectWorkingExercisesWithName(workoutId));
+    print('WOK: $wok');
+    return wok;
+  }
+
   static Future<List<Map<String, Object?>>> selectAllSetsForWorkingExercise(int finishedWorkingExerciseId) async {
     Database db = await instance.database;
     List<Map<String, Object?>> finishedSets = await db.query(

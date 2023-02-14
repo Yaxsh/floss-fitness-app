@@ -68,6 +68,11 @@ class WorkoutDatabaseRepository{
     return workingExerciseListOfMaps;
   }
 
+  static Future<List<Map<String, Object?>>> selectWorkingExAndJoinName(int workoutId) async {
+    List<Map<String, Object?>> workingExerciseListOfMaps = await WorkoutDatabaseProvider.selectWorkingExAndJoinName(workoutId);
+    return workingExerciseListOfMaps;
+  }
+
   static void insertExercise(String exerciseName, bool isCompound) async {
     await WorkoutDatabaseProvider.insertExercise(exerciseName, isCompound);
   }
