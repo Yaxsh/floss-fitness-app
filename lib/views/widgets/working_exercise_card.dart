@@ -1,37 +1,33 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:floss_fitness_app/bloc/state/workout_state.dart';
+import 'package:floss_fitness_app/data/models/exercise.dart';
 import 'package:floss_fitness_app/views/widgets/set_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/controller/workout_bloc.dart';
 import '../../data/models/set.dart';
 
-class SetCard extends StatefulWidget {
-  SetCard({Key? key, required this.workingExerciseId}) : super(key: key);
+class WorkingExerciseCard extends StatefulWidget {
+  WorkingExerciseCard({Key? key, required this.workingExerciseId, required this.exercises, this.selectedValue}) : super(key: key);
 
   final int workingExerciseId;
   String? selectedValue;
   //todo: extract all exercises from DB in constructor in workout page
-  List<String> exercises = <String>[
-    'Deadlift',
-    'Squat',
-    'Bench',
-    'OHP'
-  ];
-  //todo: replace with reading from bloc state
-
+  List<Exercise> exercises = [];
 
   @override
-  State<SetCard> createState() => _SetCardState();
+  State<WorkingExerciseCard> createState() => _WorkingExerciseCardState();
 }
 
-class _SetCardState extends State<SetCard> {
+class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
 
   final TextEditingController textEditingController = TextEditingController();
   // List<SetRow> sets = _getSetRowsFromState(BlocProvider.of<WorkoutBloc>(context).state);
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('WORKING EXERCISE ID: ${widget.workingExerciseId} AND LIST OF EX: ${widget.exercises}');
+    debugPrint('SELECTED VALUE: ${widget.selectedValue} FOR ID ${widget.workingExerciseId}');
     return BlocListener<WorkoutBloc, WorkoutState>(
       listener: (context, state){},
       child: Container(
@@ -48,7 +44,7 @@ class _SetCardState extends State<SetCard> {
                     color: Theme.of(context).hintColor,
                   ),
                 ),
-                items: widget.exercises
+                items: widget.exercises.map((e) => e.name).toList()
                     .map((item) => DropdownMenuItem<String>(
                           value: item,
                           child: Text(
@@ -61,6 +57,9 @@ class _SetCardState extends State<SetCard> {
                     .toList(),
                 value: widget.selectedValue,
                 onChanged: (value) {
+                  debugPrint("SELECTED EXER : $value");
+                  //todo: sent event to modify working exercise
+                  BlocProvider.of<WorkoutBloc>(context).add(ModifyWorkingExerciseEvent(eventType: EventType.modifyWorkingExercise, workingExerciseId: widget.workingExerciseId, exerciseName: value!));
                   setState(() {
                     widget.selectedValue = value as String;
                   });
@@ -131,10 +130,11 @@ class _SetCardState extends State<SetCard> {
                   await Future.delayed(const Duration(milliseconds: 500));
                   setState(() {});
                 }, child: const Text("Add set")),
-                ElevatedButton(onPressed: () {
-                  BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkingExercise, workingExerciseId: widget.workingExerciseId));
-                },
-                child: const Text("Finish exercise")),
+                ElevatedButton(
+                  onPressed: () {
+                    BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkingExercise, workingExerciseId: widget.workingExerciseId));
+                  },
+                  child: const Text("Finish exercise")),
               ],
             ),
           ],

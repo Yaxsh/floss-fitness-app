@@ -74,11 +74,9 @@ class DbConstants{
               VALUES($workingExercisesId, '$startTime', '$typeOfSet')''';
   }
 
-  static String insertExerciseQuery(Exercise exercise){
-    String name = exercise.name;
-    int isCompound = exercise.isCompound ? 1 : 0;
+  static String insertExerciseQuery(String name, bool isCompound){
     return '''INSERT INTO $EXERCISE_TABLE_NAME(name, is_compound)
-              VALUES($name, $isCompound)''';
+              VALUES('$name', $isCompound)''';
   }
 
   static String insertNewWorkingExerciseQuery(int workoutId){
@@ -86,10 +84,10 @@ class DbConstants{
               VALUES(-1, -1, $workoutId)''';
   }
 
-  static String endWorkingExerciseQuery(int workingExerciseId){
+  static String endWorkingExerciseQuery(int workingExerciseId, int exerciseId){
     //todo: update exercise_id from $EXERCISE_TABLE_NAME
     return '''UPDATE $WORKING_EXERCISE_TABLE_NAME
-              SET is_completed = 1
+              SET is_completed = 1, exercise_id = $exerciseId
               WHERE id = $workingExerciseId''';
   }
 
@@ -106,5 +104,12 @@ class DbConstants{
     return '''UPDATE $WORKOUT_TABLE_NAME
               SET end_date_time = '${temp.toString()}', is_completed = 1
               WHERE id = $workoutId''';
+  }
+
+  static String selectWorkingExercisesWithName(int workoutId){
+    return '''SELECT $WORKING_EXERCISE_TABLE_NAME.id, $WORKING_EXERCISE_TABLE_NAME.exercise_id, $WORKING_EXERCISE_TABLE_NAME.workout_id, $EXERCISE_TABLE_NAME.name
+              FROM $WORKING_EXERCISE_TABLE_NAME
+              INNER JOIN $EXERCISE_TABLE_NAME ON $WORKING_EXERCISE_TABLE_NAME.exercise_id=$EXERCISE_TABLE_NAME.id
+              WHERE $WORKING_EXERCISE_TABLE_NAME.workout_id=$workoutId''';
   }
 }

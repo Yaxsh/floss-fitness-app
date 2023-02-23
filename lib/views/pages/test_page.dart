@@ -20,16 +20,16 @@ class _TestPageState extends State<TestPage> {
   @override
   Widget build(BuildContext context) {
 
-    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, Object?>;
-    print(arguments.toString());
-    print(arguments['start_date_time']);
+    // final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, Object?>;
+    // print(arguments.toString());
+    // print(arguments['start_date_time']);
 
     return Scaffold(
       appBar: CustomWidgets.getAppBar(),
       drawer: const Drawer(),
       body: Center(
         child: FutureBuilder<List<Map<String, Object?>>>(
-          future: WorkoutDatabaseProvider.selectAllWorkouts(),
+          future: WorkoutDatabaseProvider.selectWorkingExAndJoinName(53),
           builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asyncSnap){
             if(!asyncSnap.hasData){
               return const Center(child: Text("no data!!"),);

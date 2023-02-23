@@ -43,13 +43,39 @@ class WorkoutDatabaseProvider{
   }
 
   static Future<List<Map<String, Object?>>> selectAllWorkouts() async{
-    debugPrint("EXECUTED STATIC FUNC2!");
     Database db = await instance.database;
-    debugPrint(db.isOpen.toString());
-    //todo: select only finished workouts
     List<Map<String, Object?>> workouts = await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time', where: 'is_completed = ?', whereArgs: [1]);
-    debugPrint(workouts.toString());
     return workouts.reversed.toList();
+  }
+
+  static Future<List<Map<String, Object?>>> selectWorkingExAndJoinName(int workoutId) async{
+    Database db = await instance.database;
+    print(DbConstants.selectWorkingExercisesWithName(workoutId));
+    List<Map<String, Object?>> wok = await db.rawQuery(DbConstants.selectWorkingExercisesWithName(workoutId));
+    print('WOK: $wok');
+    return wok;
+  }
+
+  static Future<List<Map<String, Object?>>> selectAllSetsForWorkingExercise(int finishedWorkingExerciseId) async {
+    Database db = await instance.database;
+    List<Map<String, Object?>> finishedSets = await db.query(
+        DbConstants.SET_TABLE_NAME,
+        orderBy: 'start_date_time',
+        where: 'working_exercises_id = ?',
+        whereArgs: [finishedWorkingExerciseId]
+    );
+    return finishedSets;
+  }
+
+  static Future<List<Map<String, Object?>>> selectAllWorkingExercisesForWorkoutId(int workoutId) async {
+    Database db = await instance.database;
+    List<Map<String, Object?>> finishedWorkingExercisesForWorkoutId = await db.query(
+      DbConstants.WORKING_EXERCISE_TABLE_NAME,
+      orderBy: 'id',
+      where: 'workout_id = ?',
+      whereArgs: [workoutId]
+    );
+    return finishedWorkingExercisesForWorkoutId;
   }
 
   Future<bool> checkIfWorkoutInProgress() async{
@@ -62,7 +88,6 @@ class WorkoutDatabaseProvider{
     Database db = await instance.database;
     await db.rawQuery(DbConstants.insertNewWorkingExerciseQuery(workoutId));
     List<Map<String, Object?>> workingExercises =  await db.query(DbConstants.WORKING_EXERCISE_TABLE_NAME, orderBy: 'id');
-    debugPrint("Returned list $workingExercises");
     return workingExercises.last;
   }
 
@@ -73,9 +98,9 @@ class WorkoutDatabaseProvider{
     return workingExercises.last;
   }
 
-  static Future<Map<String, Object?>> endWorkoutExerciseAndReturn(int workingExerciseId) async {
+  static Future<Map<String, Object?>> endWorkoutExerciseAndReturn(int workingExerciseId, int exerciseId) async {
     Database db = await instance.database;
-    await db.rawQuery(DbConstants.endWorkingExerciseQuery(workingExerciseId));
+    await db.rawQuery(DbConstants.endWorkingExerciseQuery(workingExerciseId, exerciseId));
     List<Map<String, Object?>> workingExercises =  await db.query(DbConstants.WORKING_EXERCISE_TABLE_NAME, where: 'id = ?', whereArgs: [workingExerciseId]);
     return workingExercises.last;
   }
@@ -92,5 +117,19 @@ class WorkoutDatabaseProvider{
     await db.rawQuery(DbConstants.endWorkoutQuery(workoutId));
     List<Map<String, Object?>> endedWorkouts =  await db.query(DbConstants.WORKOUT_TABLE_NAME, where: 'id = ?', whereArgs: [workoutId]);
     return endedWorkouts.last;
+  }
+
+  static insertExercise(String exerciseName, bool isCompound) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.insertExerciseQuery(exerciseName, isCompound));
+  }
+
+  static Future<List<Map<String, Object?>>> selectAllExercises() async {
+    Database db = await instance.database;
+    List<Map<String, Object?>> exerciseInDb = await db.query(
+        DbConstants.EXERCISE_TABLE_NAME,
+        orderBy: 'id',
+    );
+    return exerciseInDb;
   }
 }

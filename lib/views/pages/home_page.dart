@@ -1,8 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:floss_fitness_app/views/widgets/custom_static_widgets.dart';
 import 'package:floss_fitness_app/views/widgets/workout_card.dart';
-import 'package:flutter/material.dart';
-
-import '../../data/data_providers/workout_database_provider.dart';
 import '../../data/models/workout.dart';
 import '../../data/repository/workout_database_repository.dart';
 
@@ -15,6 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<WorkoutCard> workoutCardList = [];
+
   //todo: investigate why future is executed 3 times!!
   List<int> workoutDisplayed = [];
 
@@ -24,22 +23,50 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomWidgets.getAppBar(),
-      drawer: const Drawer(),
+      drawer: Drawer(
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 15.0),
+              child: Align(
+                alignment: Alignment.center,
+                child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/exercises');
+                    },
+                    child: Text("Edit exercises")
+                )
+              ),
+            )
+          ],
+        ),
+      ),
       body: FutureBuilder<List<Map<String, Object?>>>(
         future: WorkoutDatabaseRepository.getAllFinishedWorkouts(),
-        builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asyncSnap){
+        builder: (BuildContext buildContext,
+            AsyncSnapshot<List<Map<String, Object?>>> asyncSnap) {
           if (asyncSnap.hasData) {
-            debugPrint("HAS DATA: ${asyncSnap.data}");
-            List<Map<String, Object?>>? map = asyncSnap.data;
-            for(Map<String, Object?> workoutMap in map!){
-              debugPrint("MAP IN FOR LOOP: $workoutMap");
-              if(!workoutDisplayed.contains(workoutMap['id'] as int)) {
-                workoutCardList.add(WorkoutCard(workout: Workout.fromEndUpdateMap(workoutMap)));
+            //todo: find more efficient way to keep track, state?
+            for (Map<String, Object?> workoutMap in asyncSnap.data!) {
+              if (!workoutDisplayed.contains(workoutMap['id'] as int)) {
+                Workout workoutToBeInserted =
+                    Workout.fromEndUpdateMap(workoutMap);
+                if (workoutCardList.isNotEmpty) {
+                  workoutToBeInserted.startDateTime
+                          .isAfter(workoutCardList.first.workout.startDateTime)
+                      ? workoutCardList.insert(
+                          0, WorkoutCard(workout: workoutToBeInserted))
+                      : workoutCardList
+                          .add(WorkoutCard(workout: workoutToBeInserted));
+                } else {
+                  workoutCardList
+                      .add(WorkoutCard(workout: workoutToBeInserted));
+                }
                 workoutDisplayed.add(workoutMap['id'] as int);
               }
             }
-          }
-          else if(!asyncSnap.hasData){
+          } else if (!asyncSnap.hasData) {
             debugPrint("NO DATA!!!");
             return const Center(child: CircularProgressIndicator());
           }
@@ -52,10 +79,13 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async => {
-          newWorkout = await WorkoutDatabaseRepository.createAndReturnNewWorkoutInDb(),
-          Navigator.pushNamed(context, '/workout', arguments: newWorkout.toMap())
+          newWorkout =
+              await WorkoutDatabaseRepository.createAndReturnNewWorkoutInDb(),
+          await Navigator.pushNamed(context, '/workout',
+              arguments: newWorkout.toMap()),
+          setState(() {})
         },
-        tooltip: 'Increment',
+        tooltip: 'Start new workout',
         child: const Icon(Icons.add),
       ),
     );

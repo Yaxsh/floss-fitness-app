@@ -1,3 +1,4 @@
+import 'package:floss_fitness_app/data/models/exercise.dart';
 import 'package:floss_fitness_app/data/models/set.dart';
 import 'package:floss_fitness_app/data/models/working_exercise.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,10 +9,7 @@ import '../models/workout.dart';
 class WorkoutDatabaseRepository{
   WorkoutDatabaseRepository();
 
-  static Future<Workout> createAndReturnNewWorkoutInDb() async {
-    Map<String, Object?> insertedWorkoutMap = await WorkoutDatabaseProvider.insertWorkoutAndReturn();
-    return Workout.fromNewInsertMap(insertedWorkoutMap);
-  }
+  //DB calls in BloC
 
   Future<WorkingExercise> addNewWorkingExercise(int workoutId) async {
     Map<String, Object?> insertedWorkingExercise = await WorkoutDatabaseProvider.insertWorkoutExerciseAndReturn(workoutId);
@@ -23,8 +21,17 @@ class WorkoutDatabaseRepository{
     return SetW.fromNewInsertMap(insertedWorkingExercise);
   }
 
-  Future<WorkingExercise> endWorkingExercise(int workingExerciseId) async {
-    Map<String, Object?> insertedWorkingExercise = await WorkoutDatabaseProvider.endWorkoutExerciseAndReturn(workingExerciseId);
+  Future<List<Exercise>> getAllExerciseFromDbAsList() async {
+    List<Map<String, Object?>> exerciseInDb = await WorkoutDatabaseProvider.selectAllExercises();
+    List<Exercise> exercisesList = [];
+    for(Map<String, Object?> exerciseMap in exerciseInDb){
+      exercisesList.add(Exercise.fromDBMap(exerciseMap));
+    }
+    return exercisesList;
+  }
+
+  Future<WorkingExercise> endWorkingExercise(int workingExerciseId, int exerciseId) async {
+    Map<String, Object?> insertedWorkingExercise = await WorkoutDatabaseProvider.endWorkoutExerciseAndReturn(workingExerciseId, exerciseId);
     return WorkingExercise.fromNewInsertMap(insertedWorkingExercise);
   }
 
@@ -39,17 +46,39 @@ class WorkoutDatabaseRepository{
     return Workout.fromEndUpdateMap(endedWorkoutMap);
   }
 
+  //DB calls outside BloC
+
+  static Future<Workout> createAndReturnNewWorkoutInDb() async {
+    Map<String, Object?> insertedWorkoutMap = await WorkoutDatabaseProvider.insertWorkoutAndReturn();
+    return Workout.fromNewInsertMap(insertedWorkoutMap);
+  }
+
   static Future<List<Map<String, Object?>>> getAllFinishedWorkouts() async {
-    debugPrint("EXECUTED STATIC FUNC!");
     List<Map<String, Object?>> workoutsMap = await WorkoutDatabaseProvider.selectAllWorkouts();
     return workoutsMap;
-    // List<Workout> workoutsList = [];
-    // debugPrint("MAP: $workoutsMap");
-    // for(Map<String, Object?> workoutMap in workoutsMap){
-    //   debugPrint("MAP IN FOR LOOP: $workoutMap");
-    //   workoutsList.add(Workout.fromEndUpdateMap(workoutMap));
-    // }
-    // debugPrint("BEFORE RETURN : $workoutsList");
-    // return workoutsList;
+  }
+
+  static Future<List<Map<String, Object?>>> getAllSetsForWorkingExercise(int finishedWorkingExerciseId) async {
+    List<Map<String, Object?>> setsListOfMaps = await WorkoutDatabaseProvider.selectAllSetsForWorkingExercise(finishedWorkingExerciseId);
+    return setsListOfMaps;
+  }
+
+  static Future<List<Map<String, Object?>>> getAllWorkingExercisesForWorkoutId(int workoutId) async {
+    List<Map<String, Object?>> workingExerciseListOfMaps = await WorkoutDatabaseProvider.selectAllWorkingExercisesForWorkoutId(workoutId);
+    return workingExerciseListOfMaps;
+  }
+
+  static Future<List<Map<String, Object?>>> selectWorkingExAndJoinName(int workoutId) async {
+    List<Map<String, Object?>> workingExerciseListOfMaps = await WorkoutDatabaseProvider.selectWorkingExAndJoinName(workoutId);
+    return workingExerciseListOfMaps;
+  }
+
+  static void insertExercise(String exerciseName, bool isCompound) async {
+    await WorkoutDatabaseProvider.insertExercise(exerciseName, isCompound);
+  }
+
+  static Future<List<Map<String, Object?>>> getAllExerciseFromDBAsMaps() async {
+    List<Map<String, Object?>> exerciseInDb = await WorkoutDatabaseProvider.selectAllExercises();
+    return exerciseInDb;
   }
 }

@@ -1,5 +1,8 @@
+import 'package:floss_fitness_app/views/pages/exercises_details_page.dart';
+import 'package:floss_fitness_app/views/pages/exercises_page.dart';
 import 'package:floss_fitness_app/views/pages/home_page.dart';
 import 'package:floss_fitness_app/views/pages/test_page.dart';
+import 'package:floss_fitness_app/views/pages/workout_details_page.dart';
 import 'package:floss_fitness_app/views/pages/workout_page.dart';
 import 'package:flutter/material.dart';
 import 'const/constants.dart';
@@ -23,7 +26,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomePage(),
         '/workout': (context) => const WorkoutPage(),
-        '/test': (context) => const TestPage(),
+        '/exercises': (context) => const ExercisesPage(),
+        '/exercise-details': (context) => const ExercisesDetailsPage(),
+        //todo: replace with pushNamed in workoutCard
+        // '/workoutDetails': (context) => const WorkoutDetailsPage(),
       },
     );
   }

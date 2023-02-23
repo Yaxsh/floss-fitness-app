@@ -1,7 +1,7 @@
 import 'package:floss_fitness_app/bloc/controller/workout_bloc.dart';
 import 'package:floss_fitness_app/bloc/state/workout_state.dart';
 import 'package:floss_fitness_app/data/models/working_exercise.dart';
-import 'package:floss_fitness_app/views/widgets/set_card.dart';
+import 'package:floss_fitness_app/views/widgets/working_exercise_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -50,11 +50,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
             ],
           ),
-          drawer: const Drawer(),
+          // drawer: const Drawer(),
           body: ListView(
             key: UniqueKey(),
             scrollDirection: Axis.vertical,
-            children: _getSetCardsFromState(
+            children: _getWorkingExerciseCardsFromState(
                 BlocProvider.of<WorkoutBloc>(context).state),
           ),
           floatingActionButton: FloatingActionButton(
@@ -64,7 +64,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
               await Future.delayed(const Duration(milliseconds: 200));
               setState(() {});
             },
-            // onPressed: () {Navigator.pop(context);},
             tooltip: 'Add exercise',
             child: const Icon(Icons.add),
           ),
@@ -73,11 +72,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
-  List<SetCard> _getSetCardsFromState(WorkoutState workoutState) {
-    List<SetCard> setCards = [];
+  List<WorkingExerciseCard> _getWorkingExerciseCardsFromState(WorkoutState workoutState) {
+    List<WorkingExerciseCard> workingExerciseCards = [];
     for (WorkingExercise workingExercise in workoutState.workingExercises) {
-      setCards.add(SetCard(workingExerciseId: workingExercise.id));
+      String? selectedExercise = workoutState.nameOfWorkingExerciseByName[workingExercise.id];
+      workingExerciseCards.add(WorkingExerciseCard(
+          workingExerciseId: workingExercise.id,
+          exercises: workoutState.exercises,
+          selectedValue: selectedExercise,
+        ),
+      );
     }
-    return setCards;
+    return workingExerciseCards;
   }
 }
