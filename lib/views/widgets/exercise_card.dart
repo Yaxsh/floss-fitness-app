@@ -14,14 +14,12 @@ class _ExerciseCardState extends State<ExerciseCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey,
+      color: widget.isCompound ? Colors.blue : Colors.red,
       margin: const EdgeInsets.fromLTRB(5, 10, 5, 0),
       //todo: add GestureDetector for Row
       child: Row(
         children: [
           Text(widget.name),
-          //todo: replace with marker for compound
-          widget.isCompound ? Text(" XD") : Text("")
         ],
       ),
     );

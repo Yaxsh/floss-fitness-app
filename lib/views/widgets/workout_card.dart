@@ -36,8 +36,8 @@ class _WorkoutCardState extends State<WorkoutCard> {
             Row(
               children: [
                 //todo: fix abomination
-                Text(widget.workout.endDateTime?.difference(widget.workout.startDateTime).inSeconds.toString() ?? "LEL", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
-                const Text(" seconds TODO", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))
+                Text(widget.workout.endDateTime?.difference(widget.workout.startDateTime).inMinutes.toString() ?? "LEL", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
+                const Text(" minutes", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))
               ],
             )
           ],

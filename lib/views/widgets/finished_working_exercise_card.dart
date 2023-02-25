@@ -9,7 +9,7 @@ class FinishedWorkingExerciseCard extends StatefulWidget {
 
   final WorkingExercise finishedWorkingExercise;
   //todo: get from constructor
-  String exerciseName = "TODO";
+  String exerciseName = "";
 
   @override
   State<FinishedWorkingExerciseCard> createState() => _FinishedWorkingExerciseCardState();

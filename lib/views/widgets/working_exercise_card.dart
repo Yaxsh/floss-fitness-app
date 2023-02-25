@@ -69,6 +69,7 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
                 itemHeight: 40,
                 dropdownMaxHeight: 200,
                 searchController: textEditingController,
+                searchInnerWidgetHeight: 10,
                 searchInnerWidget: Padding(
                   padding: const EdgeInsets.only(
                     top: 8,
