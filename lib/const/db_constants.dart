@@ -21,8 +21,10 @@ class DbConstants{
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         start_date_time TEXT,
         end_date_time TEXT,
-        is_completed INTEGER NOT NULL
+        is_completed INTEGER NOT NULL,
+        is_deleted INTEGER NOT NULL
   ) ''';
+
   static const String CREATE_SET_TABLE = '''CREATE TABLE $SET_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         working_exercises_id INTEGER,
@@ -33,11 +35,13 @@ class DbConstants{
         weight INTEGER,
         note TEXT
   ) ''';
+
   static const String CREATE_EXERCISE_TABLE = '''CREATE TABLE $EXERCISE_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         is_compound INTEGER
   ) ''';
+
   static const String CREATE_WORKING_EXERCISE_TABLE = '''CREATE TABLE $WORKING_EXERCISE_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         workout_id INTEGER,
@@ -50,8 +54,9 @@ class DbConstants{
     String startTime = workout.startDateTime.toString();
     String endTime = workout.endDateTime == null ? "/" : workout.endDateTime.toString();
     int isCompleted = workout.isCompleted;
-    return '''INSERT INTO $WORKOUT_TABLE_NAME(start_date_time, end_date_time, is_completed)
-              VALUES('$startTime', '$endTime', $isCompleted)''';
+    int isDeleted = workout.isDeleted;
+    return '''INSERT INTO $WORKOUT_TABLE_NAME(start_date_time, end_date_time, is_completed, is_completed)
+              VALUES('$startTime', '$endTime', $isDeleted, $isCompleted)''';
   }
 
   static String insertSetQuery(SetW set){

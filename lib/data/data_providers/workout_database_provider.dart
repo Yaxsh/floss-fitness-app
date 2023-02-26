@@ -18,21 +18,26 @@ class WorkoutDatabaseProvider{
     String databaseDirectory = await getDatabasesPath();
     String databasePath = join(databaseDirectory, DbConstants.DATABASE_NAME);
     Database database = await openDatabase(
-        databasePath,
-        version: 1,
-        onCreate: _onCreateWorkoutDatabase,
-        //todo: implement onConfigure to enable foreign keys
+      databasePath,
+      version: 1,
+      onCreate: _onCreateWorkoutDatabase,
+      onConfigure: _onConfigureEnableForeignKeys,
+      onUpgrade: 
     );
-
     return database;
   }
 
   Future _onCreateWorkoutDatabase(Database db, int version) async {
+    //todo: replace with batch execution https://github.com/tekartik/sqflite/blob/master/sqflite/doc/migration_example.md#1st-version
     await db.execute(DbConstants.CREATE_WORKOUT_TABLE);
     await db.execute(DbConstants.CREATE_SET_TABLE);
     await db.execute(DbConstants.CREATE_EXERCISE_TABLE);
     await db.execute(DbConstants.CREATE_WORKING_EXERCISE_TABLE);
-    debugPrint("Installing dbs");
+    Batch b = db.batch();
+  }
+
+  Future _onConfigureEnableForeignKeys(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
   }
 
   static Future<Map<String, Object?>> insertWorkoutAndReturn() async{
@@ -50,9 +55,7 @@ class WorkoutDatabaseProvider{
 
   static Future<List<Map<String, Object?>>> selectWorkingExAndJoinName(int workoutId) async{
     Database db = await instance.database;
-    print(DbConstants.selectWorkingExercisesWithName(workoutId));
     List<Map<String, Object?>> wok = await db.rawQuery(DbConstants.selectWorkingExercisesWithName(workoutId));
-    print('WOK: $wok');
     return wok;
   }
 
