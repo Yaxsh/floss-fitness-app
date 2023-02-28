@@ -19,10 +19,21 @@ class WorkoutDatabaseProvider{
     String databasePath = join(databaseDirectory, DbConstants.DATABASE_NAME);
     Database database = await openDatabase(
       databasePath,
-      version: 1,
+      version: 2,
       onCreate: _onCreateWorkoutDatabase,
       onConfigure: _onConfigureEnableForeignKeys,
-      onUpgrade: 
+      onUpgrade: (db, oldVersion, newVersion) async {
+        debugPrint('OLD VERSION: $oldVersion NEW VERSION: $newVersion');
+        var batch = db.batch();
+        switch(oldVersion){
+          case 1:
+                  batch.execute(DbConstants.UPDATE_WORKOUT_TABLE_V2);
+                  batch.execute(DbConstants.UPDATE_EXISTING_WORKOUT_V2);
+                  debugPrint('UPDATING EXISTING WORKOUT!!!');
+                  break;
+        }
+        batch.commit();
+      }
     );
     return database;
   }
@@ -33,7 +44,6 @@ class WorkoutDatabaseProvider{
     await db.execute(DbConstants.CREATE_SET_TABLE);
     await db.execute(DbConstants.CREATE_EXERCISE_TABLE);
     await db.execute(DbConstants.CREATE_WORKING_EXERCISE_TABLE);
-    Batch b = db.batch();
   }
 
   Future _onConfigureEnableForeignKeys(Database db) async {
@@ -49,7 +59,8 @@ class WorkoutDatabaseProvider{
 
   static Future<List<Map<String, Object?>>> selectAllWorkouts() async{
     Database db = await instance.database;
-    List<Map<String, Object?>> workouts = await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time', where: 'is_completed = ?', whereArgs: [1]);
+    List<Map<String, Object?>> workouts = await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time', where: 'is_completed = 1 AND is_deleted=0');
+    debugPrint("UPDATED WORKOUT: $workouts");
     return workouts.reversed.toList();
   }
 
@@ -120,6 +131,11 @@ class WorkoutDatabaseProvider{
     await db.rawQuery(DbConstants.endWorkoutQuery(workoutId));
     List<Map<String, Object?>> endedWorkouts =  await db.query(DbConstants.WORKOUT_TABLE_NAME, where: 'id = ?', whereArgs: [workoutId]);
     return endedWorkouts.last;
+  }
+
+  static Future deleteWorkoutById(int workoutId) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.deleteWorkoutQuery(workoutId));
   }
 
   static insertExercise(String exerciseName, bool isCompound) async {

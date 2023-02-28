@@ -49,13 +49,22 @@ class DbConstants{
         is_completed INTEGER
   ) ''';
 
+  //Update queries for V2 DB
+  static const String UPDATE_WORKOUT_TABLE_V2 = '''ALTER TABLE $WORKOUT_TABLE_NAME
+        ADD is_deleted INTEGER NOT NULL
+  ''';
+
+  static const String UPDATE_EXISTING_WORKOUT_V2 = '''UPDATE $WORKOUT_TABLE_NAME
+        SET is_deleted = 0
+  ''';
+
   //(C)insert queries
   static String insertWorkoutQuery(Workout workout){
     String startTime = workout.startDateTime.toString();
     String endTime = workout.endDateTime == null ? "/" : workout.endDateTime.toString();
     int isCompleted = workout.isCompleted;
     int isDeleted = workout.isDeleted;
-    return '''INSERT INTO $WORKOUT_TABLE_NAME(start_date_time, end_date_time, is_completed, is_completed)
+    return '''INSERT INTO $WORKOUT_TABLE_NAME(start_date_time, end_date_time, is_deleted, is_completed)
               VALUES('$startTime', '$endTime', $isDeleted, $isCompleted)''';
   }
 
@@ -108,6 +117,12 @@ class DbConstants{
     DateTime temp = DateTime.now();
     return '''UPDATE $WORKOUT_TABLE_NAME
               SET end_date_time = '${temp.toString()}', is_completed = 1
+              WHERE id = $workoutId''';
+  }
+
+  static String deleteWorkoutQuery(int workoutId){
+    return '''UPDATE $WORKOUT_TABLE_NAME
+              SET is_deleted = 1
               WHERE id = $workoutId''';
   }
 

@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class WorkoutCard extends StatefulWidget {
-  const WorkoutCard({Key? key, required this.workout}) : super(key: key);
+  WorkoutCard({Key? key, required this.workout, required this.deleteWorkoutFunction, required this.indexInHomePage}) : super(key: key);
 
   final Workout workout;
+  final Function deleteWorkoutFunction;
+  final int indexInHomePage;
+  bool isDeleted = false;
+  changeFlagFunction() {isDeleted = true; debugPrint('calling changeFlagFunction');}
 
   @override
   State<WorkoutCard> createState() => _WorkoutCardState();
@@ -14,17 +18,17 @@ class WorkoutCard extends StatefulWidget {
 
 class _WorkoutCardState extends State<WorkoutCard> {
 
-  Workout? workout;
-  //"${widget.workout.startDateTime.day}-${widget.workout.startDateTime.month}-${widget.workout.startDateTime.year}"
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      //todo: open specific workout stats page
-      onTap: (){
+      onTap: () async {
         debugPrint("Clicked workout with id: ${widget.workout.id}!!");
         //todo: replace with pushNamed
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkoutDetailsPage(workout: widget.workout)));
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkoutDetailsPage(workout: widget.workout, deleteWorkoutFunction: widget.changeFlagFunction)));
+        if(widget.isDeleted){
+          debugPrint('calling deleteWorkoutFunction is card');
+          widget.deleteWorkoutFunction(widget.indexInHomePage);
+        }
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(5, 10, 5, 0),

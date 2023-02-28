@@ -81,4 +81,8 @@ class WorkoutDatabaseRepository{
     List<Map<String, Object?>> exerciseInDb = await WorkoutDatabaseProvider.selectAllExercises();
     return exerciseInDb;
   }
+
+  static Future deleteWorkoutById(int workoutId) async {
+    await WorkoutDatabaseProvider.deleteWorkoutById(workoutId);
+  }
 }
