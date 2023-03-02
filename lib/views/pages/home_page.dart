@@ -14,7 +14,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<WorkoutCard> workoutCardList = [];
 
-  //todo: investigate why future is executed 3 times!!
+  /*todo: investigate why future is executed 3 times!!
+  * replacing with better data structure might be more optimal?*/
   List<int> workoutDisplayed = [];
 
   late Workout newWorkout;
@@ -82,12 +83,6 @@ class _HomePageState extends State<HomePage> {
     debugPrint('refreshed');
   }
 
-  deleteWorkout(int workoutToBeDeleted) async {
-    //todo: format function
-    setState(() {});
-    debugPrint('setstate from deletelworkout@@@!');
-  }
-
   readWorkoutCardsFromData(List<Map<String, Object?>> data){
     debugPrint("readWorkoutCardsFromData building... $workoutDisplayed");
     for (Map<String, Object?> workoutMap in data) {
@@ -108,5 +103,11 @@ class _HomePageState extends State<HomePage> {
         workoutDisplayed.add(workoutMap['id'] as int);
       }
     }
+  }
+
+  deleteWorkout(int workoutToBeDeleted) async {
+    //todo: format function
+    setState(() {});
+    debugPrint('setstate from deletelworkout@@@!');
   }
 }

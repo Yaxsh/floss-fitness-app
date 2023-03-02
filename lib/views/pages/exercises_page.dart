@@ -14,7 +14,7 @@ class ExercisesPage extends StatefulWidget {
 class _ExercisesPageState extends State<ExercisesPage> {
 
   List<ExerciseCard> exerciseCards = [];
-  //todo: replace with more efficient way of tracking, state?
+  //todo: replace with more efficient way of tracking, state or better data structure?
   List<int> exerciseIdDisplayed = [];
 
   @override
@@ -25,23 +25,15 @@ class _ExercisesPageState extends State<ExercisesPage> {
           future: WorkoutDatabaseRepository.getAllExerciseFromDBAsMaps(),
           builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asyncSnap) {
             if(asyncSnap.hasData) {
-              for (Map<String, Object?> exerciseMap in asyncSnap.data!) {
-                debugPrint("MAP: $exerciseMap");
-                if(!exerciseIdDisplayed.contains(exerciseMap['id'] as int)) {
-                  exerciseCards.add(ExerciseCard(
-                      name: exerciseMap['name'].toString(),
-                      isCompound: exerciseMap['is_compound'] as int == 1 ? true : false,
-                      exerciseId: exerciseMap['id'] as int));
-                  exerciseIdDisplayed.add(exerciseMap['id'] as int);
-                }
-              }
-              return ListView(
-                children: exerciseCards,
-              );
+              refreshToRebuild();
+              readExercisesFromData(asyncSnap.data!);
             }
             else{
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
+            return ListView(
+              children: exerciseCards,
+            );
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -51,5 +43,31 @@ class _ExercisesPageState extends State<ExercisesPage> {
         child: Icon(Icons.add),
       ),
     );
+  }
+
+  readExercisesFromData(List<Map<String, Object?>> data){
+      for (Map<String, Object?> exerciseMap in data) {
+        debugPrint("MAP: $exerciseMap");
+        if(!exerciseIdDisplayed.contains(exerciseMap['id'] as int)) {
+          exerciseCards.add(ExerciseCard(
+              name: exerciseMap['name'].toString(),
+              isCompound: exerciseMap['is_compound'] as int == 1 ? true : false,
+              exerciseId: exerciseMap['id'] as int,
+              updateExerciseCard: updateExercises));
+          exerciseIdDisplayed.add(exerciseMap['id'] as int);
+        }
+      }
+      return ListView(
+        children: exerciseCards,
+      );
+  }
+
+  refreshToRebuild(){
+    exerciseIdDisplayed = [];
+    exerciseCards = [];
+  }
+
+  updateExercises(){
+    setState(() {});
   }
 }
