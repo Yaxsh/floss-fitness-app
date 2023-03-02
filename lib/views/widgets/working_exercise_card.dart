@@ -115,6 +115,7 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
               padding: const EdgeInsets.only(left: 15),
               child: ListView(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 children: _getSetRowsFromState(BlocProvider.of<WorkoutBloc>(context).state),
               ),
             ),
