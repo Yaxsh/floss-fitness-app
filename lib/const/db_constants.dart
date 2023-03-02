@@ -93,6 +93,12 @@ class DbConstants{
               VALUES('$name', $isCompound)''';
   }
 
+  static String updateExerciseQuery(String name, int isCompound, int exerciseId){
+    return '''UPDATE $EXERCISE_TABLE_NAME
+              SET name = '$name', is_compound = $isCompound
+              WHERE id = $exerciseId''';
+  }
+
   static String insertNewWorkingExerciseQuery(int workoutId){
     return '''INSERT INTO $WORKING_EXERCISE_TABLE_NAME(exercise_id, is_completed, workout_id) 
               VALUES(-1, -1, $workoutId)''';

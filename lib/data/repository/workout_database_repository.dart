@@ -77,6 +77,10 @@ class WorkoutDatabaseRepository{
     await WorkoutDatabaseProvider.insertExercise(exerciseName, isCompound);
   }
 
+  static void updateExercise(String exerciseName, int isCompound, int exerciseId) async {
+    await WorkoutDatabaseProvider.updateExercise(exerciseName, isCompound, exerciseId);
+  }
+
   static Future<List<Map<String, Object?>>> getAllExerciseFromDBAsMaps() async {
     List<Map<String, Object?>> exerciseInDb = await WorkoutDatabaseProvider.selectAllExercises();
     return exerciseInDb;

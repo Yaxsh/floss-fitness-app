@@ -143,6 +143,11 @@ class WorkoutDatabaseProvider{
     await db.rawQuery(DbConstants.insertExerciseQuery(exerciseName, isCompound));
   }
 
+  static updateExercise(String exerciseName, int isCompound, int exerciseId) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.updateExerciseQuery(exerciseName, isCompound, exerciseId));
+  }
+
   static Future<List<Map<String, Object?>>> selectAllExercises() async {
     Database db = await instance.database;
     List<Map<String, Object?>> exerciseInDb = await db.query(

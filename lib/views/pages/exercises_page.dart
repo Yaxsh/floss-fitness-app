@@ -30,7 +30,8 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 if(!exerciseIdDisplayed.contains(exerciseMap['id'] as int)) {
                   exerciseCards.add(ExerciseCard(
                       name: exerciseMap['name'].toString(),
-                      isCompound: exerciseMap['is_compound'] as int == 1 ? true : false));
+                      isCompound: exerciseMap['is_compound'] as int == 1 ? true : false,
+                      exerciseId: exerciseMap['id'] as int));
                   exerciseIdDisplayed.add(exerciseMap['id'] as int);
                 }
               }
