@@ -43,7 +43,12 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           //todo: add exercise id
           event = event as EndSetFromWorkingExerciseEvent;
           SetW returnedSet = await _workoutDatabaseRepository.endSetFromWorkingExercise(event.setId!, event.reps, event.weight);
-          debugPrint(returnedSet.toString());
+          for(var i=0; i<state.sets.length ; i++){
+            if(state.sets.elementAt(i).setId == returnedSet.setId){
+              state.sets[i] = returnedSet;
+            }
+          }
+          debugPrint('RE SET: ${returnedSet.toString()}');
           break;
         case EventType.modifyWorkingExercise:
           var event1 = event as ModifyWorkingExerciseEvent;

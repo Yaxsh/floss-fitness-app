@@ -6,19 +6,22 @@ import '../../bloc/state/workout_state.dart';
 
 class SetRow extends StatefulWidget {
   //todo: add reps and weight
-  SetRow({Key? key, required this.setId, required this.reps, required this.weight}) : super(key: key);
+  SetRow({Key? key, required this.setId, required this.reps, required this.weight, required this.isEnded}) : super(key: key);
 
   final int setId;
   late int reps;
   late int weight;
+  bool isEnded;
 
   @override
   State<SetRow> createState() => _SetRowState();
 }
 
 class _SetRowState extends State<SetRow> {
+  final _formKey = GlobalKey<FormState>();
   TextEditingController repsTextController = TextEditingController();
   TextEditingController weightTextController = TextEditingController();
+
   
   @override
   void initState(){
@@ -33,38 +36,48 @@ class _SetRowState extends State<SetRow> {
   Widget build(BuildContext context) {
     return BlocListener<WorkoutBloc, WorkoutState>(
       listener: (context, state) {},
-      child: Row(
-        children: [
-          //todo: replace with Expanded/Flexible
-          Padding(padding: EdgeInsets.only(right: 5)),
-          SizedBox(
-            width: 35,
-            child: TextField(
-              controller: weightTextController,
-              keyboardType: TextInputType.number
-            ),
-          ),
-          const Text("  kg  x ", style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(
-            width: 35,
-            child: TextField(
-                controller: repsTextController,
+      child: Form(
+        key: _formKey,
+        child: Row(
+          children: [
+            //todo: replace with Expanded/Flexible
+            const Padding(padding: EdgeInsets.only(right: 5)),
+            SizedBox(
+              width: 40,
+              child: TextFormField(
+                enabled: !widget.isEnded,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "";
+                  }
+                  return null;
+                },
+                controller: weightTextController,
                 keyboardType: TextInputType.number
+              ),
             ),
-          ),
-          const Text("  reps.", style: TextStyle(fontWeight: FontWeight.bold)),
-          Padding(padding: EdgeInsets.only(right: 25)),
-          ElevatedButton(onPressed: () {
-            BlocProvider.of<WorkoutBloc>(context).add(
-                EndSetFromWorkingExerciseEvent(
-                    eventType: EventType.endSetFromWorkingExercise,
-                    reps:int.parse(repsTextController.text),
-                    weight: int.parse(weightTextController.text),
-                    setId: widget.setId
-                )
-            );
-          }, child: Text("end set"))
-        ],
+            const Text("  kg  x ", style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(
+              width: 40,
+              child: TextFormField(
+                  enabled: !widget.isEnded,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "";
+                    }
+                    return null;
+                  },
+                  controller: repsTextController,
+                  keyboardType: TextInputType.number
+              ),
+            ),
+            const Text("  reps.", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Padding(padding: EdgeInsets.only(right: 25)),
+            ElevatedButton(
+              onPressed: widget.isEnded ? null : endSet,
+              child: const Text("end set"))
+          ],
+        ),
       ),
     );
   }
@@ -94,5 +107,19 @@ class _SetRowState extends State<SetRow> {
       return false;
     }
     return double.tryParse(s) != null;
+  }
+
+  endSet () {
+    if(_formKey.currentState!.validate()){
+      BlocProvider.of<WorkoutBloc>(context).add(
+          EndSetFromWorkingExerciseEvent(
+              eventType: EventType.endSetFromWorkingExercise,
+              reps:int.parse(repsTextController.text),
+              weight: int.parse(weightTextController.text),
+              setId: widget.setId
+          ));
+      widget.isEnded = true;
+      setState(() {});
+    }
   }
 }
