@@ -61,25 +61,17 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           debugPrint('state.nameOfWorkingExerciseByName: ${state.nameOfWorkingExerciseByName}');
           break;
         case EventType.endWorkingExercise:
-          // var castedEvent = event as EndWorkingExerciseEvent;
-          // debugPrint("RECEIVED ENDWORKINGEVENT: ${castedEvent.exerciseName}");
-          // int exerciseId = state.exercises.where((e) => e.name==castedEvent.exerciseName).toString() as int;
           int exerciseId = -1;
+          int indexOfWorkingExercise = 0;
           for(WorkingExercise workingExerciseInState in state.workingExercises){
             if(event.workingExerciseId! == workingExerciseInState.id){
               exerciseId = workingExerciseInState.exerciseId;
-            }
-          }
-          WorkingExercise workingExercise = await _workoutDatabaseRepository.endWorkingExercise(event.workingExerciseId!, exerciseId);
-          int indexOfWorkingExercise = 0;
-          for(WorkingExercise workingExerciseInLoop in state.workingExercises){
-            if(workingExerciseInLoop.id == event.workingExerciseId){
               break;
             }
             indexOfWorkingExercise++;
           }
-          state.workingExercises.removeAt(indexOfWorkingExercise);
-          state.workingExercises.insert(indexOfWorkingExercise, workingExercise);
+          WorkingExercise workingExercise = await _workoutDatabaseRepository.endWorkingExercise(event.workingExerciseId!, exerciseId);
+          state.workingExercises[indexOfWorkingExercise] = workingExercise;
           break;
         case EventType.endWorkout:
           Workout endedWorkout = await _workoutDatabaseRepository.endWorkout(state.workout.id!);

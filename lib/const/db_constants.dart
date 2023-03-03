@@ -101,7 +101,7 @@ class DbConstants{
 
   static String insertNewWorkingExerciseQuery(int workoutId){
     return '''INSERT INTO $WORKING_EXERCISE_TABLE_NAME(exercise_id, is_completed, workout_id) 
-              VALUES(-1, -1, $workoutId)''';
+              VALUES(-1, 0, $workoutId)''';
   }
 
   static String endWorkingExerciseQuery(int workingExerciseId, int exerciseId){
@@ -133,7 +133,7 @@ class DbConstants{
   }
 
   static String selectWorkingExercisesWithName(int workoutId){
-    return '''SELECT $WORKING_EXERCISE_TABLE_NAME.id, $WORKING_EXERCISE_TABLE_NAME.exercise_id, $WORKING_EXERCISE_TABLE_NAME.workout_id, $EXERCISE_TABLE_NAME.name
+    return '''SELECT $WORKING_EXERCISE_TABLE_NAME.id, $WORKING_EXERCISE_TABLE_NAME.is_completed, $WORKING_EXERCISE_TABLE_NAME.exercise_id, $WORKING_EXERCISE_TABLE_NAME.workout_id, $EXERCISE_TABLE_NAME.name
               FROM $WORKING_EXERCISE_TABLE_NAME
               INNER JOIN $EXERCISE_TABLE_NAME ON $WORKING_EXERCISE_TABLE_NAME.exercise_id=$EXERCISE_TABLE_NAME.id
               WHERE $WORKING_EXERCISE_TABLE_NAME.workout_id=$workoutId''';

@@ -80,6 +80,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           workingExerciseId: workingExercise.id,
           exercises: workoutState.exercises,
           selectedValue: selectedExercise,
+          isOngoing: workingExercise.isCompleted == 1 ? false : true,
         ),
       );
     }

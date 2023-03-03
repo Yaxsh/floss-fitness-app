@@ -8,12 +8,13 @@ import '../../bloc/controller/workout_bloc.dart';
 import '../../data/models/set.dart';
 
 class WorkingExerciseCard extends StatefulWidget {
-  WorkingExerciseCard({Key? key, required this.workingExerciseId, required this.exercises, this.selectedValue}) : super(key: key);
+  WorkingExerciseCard({Key? key, required this.workingExerciseId, required this.exercises, this.selectedValue, required this.isOngoing}) : super(key: key);
 
   final int workingExerciseId;
   String? selectedValue;
   //todo: extract all exercises from DB in constructor in workout page
   List<Exercise> exercises = [];
+  bool isOngoing;
 
   @override
   State<WorkingExerciseCard> createState() => _WorkingExerciseCardState();
@@ -56,14 +57,14 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
                         ))
                     .toList(),
                 value: widget.selectedValue,
-                onChanged: (value) {
+                onChanged: widget.isOngoing ? (value) {
                   debugPrint("SELECTED EXER : $value");
                   //todo: sent event to modify working exercise
-                  BlocProvider.of<WorkoutBloc>(context).add(ModifyWorkingExerciseEvent(eventType: EventType.modifyWorkingExercise, workingExerciseId: widget.workingExerciseId, exerciseName: value!));
+                  BlocProvider.of<WorkoutBloc>(context).add(ModifyWorkingExerciseEvent(eventType: EventType.modifyWorkingExercise, workingExerciseId: widget.workingExerciseId, exerciseName: value! as String));
                   setState(() {
                     widget.selectedValue = value as String;
                   });
-                },
+                } : null,
                 buttonHeight: 40,
                 buttonWidth: 140,
                 itemHeight: 40,
@@ -127,15 +128,18 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                OutlinedButton(onPressed: () async {
+                OutlinedButton(onPressed: widget.isOngoing ? () async {
                   BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.addSetToWorkingExercise, workingExerciseId: widget.workingExerciseId));
                   await Future.delayed(const Duration(milliseconds: 500));
                   setState(() {});
-                }, child: const Text("Add set")),
+                } : null,
+                child: const Text("Add set")),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: widget.isOngoing ? () {
                     BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkingExercise, workingExerciseId: widget.workingExerciseId));
-                  },
+                    widget.isOngoing = false;
+                    setState(() {});
+                  } : null,
                   child: const Text("Finish exercise")),
               ],
             ),

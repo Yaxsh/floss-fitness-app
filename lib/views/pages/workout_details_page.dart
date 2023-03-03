@@ -68,6 +68,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
 
   List<FinishedWorkingExerciseCard> _getFinishedWorkingExerciseCardsFromDB(List<Map<String, Object?>> workingExercisesListOfMaps){
     List<FinishedWorkingExerciseCard> finishedWorkingExerciseCards = [];
+    debugPrint('MAPPERINO: $workingExercisesListOfMaps');
     for(Map<String, Object?> workingExerciseMap in workingExercisesListOfMaps){
       finishedWorkingExerciseCards.add(FinishedWorkingExerciseCard(finishedWorkingExercise: WorkingExercise.fromEndedUpdateMap(workingExerciseMap), exerciseName: workingExerciseMap['name'].toString(),));
     }
