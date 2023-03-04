@@ -58,6 +58,10 @@ class DbConstants{
         SET is_deleted = 0
   ''';
 
+  static const String UPDATE_EXERCISE_TABLE_V2 = '''ALTER TABLE $SET_TABLE_NAME
+        ALTER COLUMN weight REAL
+  ''';
+
   //(C)insert queries
   static String insertWorkoutQuery(Workout workout){
     String startTime = workout.startDateTime.toString();
@@ -111,7 +115,7 @@ class DbConstants{
               WHERE id = $workingExerciseId''';
   }
 
-  static String endSetFromWorkingExerciseQuery(int setId, int reps, int weight){
+  static String endSetFromWorkingExerciseQuery(int setId, int reps, num weight){
     //todo: add note and exercise id
     DateTime temp = DateTime.now();
     return '''UPDATE $SET_TABLE_NAME

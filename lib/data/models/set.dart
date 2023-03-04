@@ -8,7 +8,7 @@ class SetW{
   late DateTime? endTimeOfSet;
   late TypeOfSet typeOfSet = TypeOfSet.set;
   late int reps;
-  late int weight;
+  late num weight;
   late String note;
 
   SetW({
@@ -51,7 +51,7 @@ class SetW{
     startTimeOfSet = DateTime.parse(map['start_date_time'] as String);
     endTimeOfSet = DateTime.parse(map['end_date_time'] as String);
     reps = map['reps'] as int;
-    weight = map['weight'] as int;
+    weight = map['weight'] as num;
     note = map['note'] as String;
     var writtenValueTypeOfSet = map['type_of_set'] as String;
     switch(writtenValueTypeOfSet){

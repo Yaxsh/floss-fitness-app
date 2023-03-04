@@ -102,7 +102,7 @@ enum EventType{
 
 class ModifySetFromWorkingExerciseEvent extends WorkoutEvent{
   final int reps;
-  final int weight;
+  final num weight;
 
   ModifySetFromWorkingExerciseEvent({required super.eventType, required this.reps, required this.weight, setId}){
     this.setId = setId;
@@ -111,7 +111,7 @@ class ModifySetFromWorkingExerciseEvent extends WorkoutEvent{
 
 class EndSetFromWorkingExerciseEvent extends WorkoutEvent{
   final int reps;
-  final int weight;
+  final num weight;
   
   EndSetFromWorkingExerciseEvent({required super.eventType, required this.reps, required this.weight, setId}){
     this.setId = setId;

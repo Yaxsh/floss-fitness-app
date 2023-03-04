@@ -29,6 +29,7 @@ class WorkoutDatabaseProvider{
           case 1:
                   batch.execute(DbConstants.UPDATE_WORKOUT_TABLE_V2);
                   batch.execute(DbConstants.UPDATE_EXISTING_WORKOUT_V2);
+                  batch.execute(DbConstants.UPDATE_EXERCISE_TABLE_V2);
                   debugPrint('UPDATING EXISTING WORKOUT!!!');
                   break;
         }
@@ -119,7 +120,7 @@ class WorkoutDatabaseProvider{
     return workingExercises.last;
   }
 
-  static Future<Map<String, Object?>> endWorkoutSetAndReturn(int setId, int reps, int weight) async {
+  static Future<Map<String, Object?>> endWorkoutSetAndReturn(int setId, int reps, num weight) async {
     Database db = await instance.database;
     await db.rawQuery(DbConstants.endSetFromWorkingExerciseQuery(setId, reps, weight));
     List<Map<String, Object?>> endedSets =  await db.query(DbConstants.SET_TABLE_NAME, where: 'id = ?', whereArgs: [setId]);

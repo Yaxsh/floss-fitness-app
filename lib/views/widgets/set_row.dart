@@ -10,7 +10,7 @@ class SetRow extends StatefulWidget {
 
   final int setId;
   late int reps;
-  late int weight;
+  late num weight;
   bool isEnded;
 
   @override
@@ -95,7 +95,7 @@ class _SetRowState extends State<SetRow> {
         ModifySetFromWorkingExerciseEvent(
             eventType: EventType.modifySetFromWorkingExercise,
             reps: _isNumeric(repsTextController.text) ? int.parse(repsTextController.text) : 0,
-            weight: _isNumeric(weightTextController.text) ? int.parse(weightTextController.text) : 0,
+            weight: _isNumeric(weightTextController.text) ? double.parse(weightTextController.text) : 0,
             setId: widget.setId
         )
     );
@@ -115,7 +115,7 @@ class _SetRowState extends State<SetRow> {
           EndSetFromWorkingExerciseEvent(
               eventType: EventType.endSetFromWorkingExercise,
               reps:int.parse(repsTextController.text),
-              weight: int.parse(weightTextController.text),
+              weight: double.parse(weightTextController.text),
               setId: widget.setId
           ));
       widget.isEnded = true;

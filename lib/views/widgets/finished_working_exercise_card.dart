@@ -76,7 +76,7 @@ class _FinishedWorkingExerciseCardState extends State<FinishedWorkingExerciseCar
   List<FinishedSetRow> _getSetRowsFromDB(List<Map<String, Object?>>? finishedSetListOfMaps) {
     List<FinishedSetRow> finishedSetsRows = [];
     for(Map<String, Object?> setMap in finishedSetListOfMaps!){
-      finishedSetsRows.add(FinishedSetRow(reps: setMap['reps'] as int, weight: setMap['weight'] as int));
+      finishedSetsRows.add(FinishedSetRow(reps: setMap['reps'] as int, weight: setMap['weight'] as num));
     }
     return finishedSetsRows;
   }

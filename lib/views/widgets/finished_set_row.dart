@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class FinishedSetRow extends StatefulWidget {
   const FinishedSetRow({Key? key, required this.reps, required this.weight}) : super(key: key);
 
-  final int reps, weight;
+  final int reps;
+  final num weight;
 
   @override
   State<FinishedSetRow> createState() => _FinishedSetRowState();
