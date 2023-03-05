@@ -24,16 +24,15 @@ class WorkoutDatabaseProvider{
       onConfigure: _onConfigureEnableForeignKeys,
       onUpgrade: (db, oldVersion, newVersion) async {
         debugPrint('OLD VERSION: $oldVersion NEW VERSION: $newVersion');
-        var batch = db.batch();
         switch(oldVersion){
           case 1:
-                  batch.execute(DbConstants.UPDATE_WORKOUT_TABLE_V2);
-                  batch.execute(DbConstants.UPDATE_EXISTING_WORKOUT_V2);
-                  batch.execute(DbConstants.UPDATE_EXERCISE_TABLE_V2);
-                  debugPrint('UPDATING EXISTING WORKOUT!!!');
-                  break;
+            //todo: replace with db.batch()
+            db.execute(DbConstants.UPDATE_WORKOUT_TABLE_V2);
+            db.execute(DbConstants.UPDATE_EXISTING_WORKOUT_V2);
+            db.execute(DbConstants.UPDATE_EXERCISE_TABLE_V2);
+            debugPrint('UPDATING EXISTING WORKOUT!!!');
+            break;
         }
-        batch.commit();
       }
     );
     return database;

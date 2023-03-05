@@ -27,6 +27,11 @@ class _ExercisesPageState extends State<ExercisesPage> {
             if(asyncSnap.hasData) {
               refreshToRebuild();
               readExercisesFromData(asyncSnap.data!);
+              if(exerciseCards.isEmpty){
+                return Center(
+                  child: Text('No exercises, add them by clicking the + button'),
+                );
+              }
             }
             else{
               return const CircularProgressIndicator();

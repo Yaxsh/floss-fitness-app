@@ -21,8 +21,7 @@ class DbConstants{
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         start_date_time TEXT,
         end_date_time TEXT,
-        is_completed INTEGER NOT NULL,
-        is_deleted INTEGER NOT NULL
+        is_completed INTEGER NOT NULL
   ) ''';
 
   static const String CREATE_SET_TABLE = '''CREATE TABLE $SET_TABLE_NAME(
@@ -51,15 +50,16 @@ class DbConstants{
 
   //Update queries for V2 DB
   static const String UPDATE_WORKOUT_TABLE_V2 = '''ALTER TABLE $WORKOUT_TABLE_NAME
-        ADD is_deleted INTEGER NOT NULL
+        ADD is_deleted INTEGER
   ''';
 
   static const String UPDATE_EXISTING_WORKOUT_V2 = '''UPDATE $WORKOUT_TABLE_NAME
         SET is_deleted = 0
   ''';
 
+  //todo: investigate whether it is necessary
   static const String UPDATE_EXERCISE_TABLE_V2 = '''ALTER TABLE $SET_TABLE_NAME
-        ALTER COLUMN weight REAL
+        MODIFY COLUMN weight REAL
   ''';
 
   //(C)insert queries

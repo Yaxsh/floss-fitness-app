@@ -51,6 +51,18 @@ class _HomePageState extends State<HomePage> {
             //todo: find more efficient way to keep track, state?
             refreshToRebuild();
             readWorkoutCardsFromData(asyncSnap.data!);
+            if(workoutCardList.isEmpty){
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Add exercises before starting workouts!'),
+                    Padding(padding: EdgeInsets.only(bottom: 10)),
+                    OutlinedButton(onPressed: () {Navigator.pushNamed(context, '/exercises');}, child: Text('Add exercises'))
+                  ],
+                ),
+              );
+            }
           } else if (!asyncSnap.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
