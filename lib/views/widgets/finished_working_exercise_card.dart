@@ -28,6 +28,7 @@ class _FinishedWorkingExerciseCardState extends State<FinishedWorkingExerciseCar
             color: Colors.black,
             indent: 5,
             endIndent: 5,
+            thickness: 0.8,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 15),
@@ -38,12 +39,14 @@ class _FinishedWorkingExerciseCardState extends State<FinishedWorkingExerciseCar
                   if(asyncSnap.hasData){
                     return ListView(
                       shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       children: _getSetRowsFromDB(asyncSnap.data),
                     );
                   }
                   else{
                     return ListView(
                       shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       children: const [], //FinishedSetRow(reps: 0, weight: 0)
                     );
                   }
@@ -54,12 +57,13 @@ class _FinishedWorkingExerciseCardState extends State<FinishedWorkingExerciseCar
             color: Colors.black,
             indent: 5,
             endIndent: 5,
+            thickness: 0.8,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(onPressed: () {
-                debugPrint("EDITED NOTE OF WORKING EXERCISE!");
+                debugPrint("EDITED NOTE OF WORKING EXERCISE ID: ${widget.finishedWorkingExercise.id}");
               },
                   child: const Text("Edit note TODO")),
             ],
@@ -72,7 +76,7 @@ class _FinishedWorkingExerciseCardState extends State<FinishedWorkingExerciseCar
   List<FinishedSetRow> _getSetRowsFromDB(List<Map<String, Object?>>? finishedSetListOfMaps) {
     List<FinishedSetRow> finishedSetsRows = [];
     for(Map<String, Object?> setMap in finishedSetListOfMaps!){
-      finishedSetsRows.add(FinishedSetRow(reps: setMap['reps'] as int, weight: setMap['weight'] as int));
+      finishedSetsRows.add(FinishedSetRow(reps: setMap['reps'] as int, weight: setMap['weight'] as num));
     }
     return finishedSetsRows;
   }

@@ -23,6 +23,7 @@ class DbConstants{
         end_date_time TEXT,
         is_completed INTEGER NOT NULL
   ) ''';
+
   static const String CREATE_SET_TABLE = '''CREATE TABLE $SET_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         working_exercises_id INTEGER,
@@ -33,11 +34,13 @@ class DbConstants{
         weight INTEGER,
         note TEXT
   ) ''';
+
   static const String CREATE_EXERCISE_TABLE = '''CREATE TABLE $EXERCISE_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         is_compound INTEGER
   ) ''';
+
   static const String CREATE_WORKING_EXERCISE_TABLE = '''CREATE TABLE $WORKING_EXERCISE_TABLE_NAME(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         workout_id INTEGER,
@@ -45,13 +48,28 @@ class DbConstants{
         is_completed INTEGER
   ) ''';
 
+  //Update queries for V2 DB
+  static const String UPDATE_WORKOUT_TABLE_V2 = '''ALTER TABLE $WORKOUT_TABLE_NAME
+        ADD is_deleted INTEGER
+  ''';
+
+  static const String UPDATE_EXISTING_WORKOUT_V2 = '''UPDATE $WORKOUT_TABLE_NAME
+        SET is_deleted = 0
+  ''';
+
+  //todo: investigate whether it is necessary
+  static const String UPDATE_EXERCISE_TABLE_V2 = '''ALTER TABLE $SET_TABLE_NAME
+        MODIFY COLUMN weight REAL
+  ''';
+
   //(C)insert queries
   static String insertWorkoutQuery(Workout workout){
     String startTime = workout.startDateTime.toString();
     String endTime = workout.endDateTime == null ? "/" : workout.endDateTime.toString();
     int isCompleted = workout.isCompleted;
-    return '''INSERT INTO $WORKOUT_TABLE_NAME(start_date_time, end_date_time, is_completed)
-              VALUES('$startTime', '$endTime', $isCompleted)''';
+    int isDeleted = workout.isDeleted;
+    return '''INSERT INTO $WORKOUT_TABLE_NAME(start_date_time, end_date_time, is_deleted, is_completed)
+              VALUES('$startTime', '$endTime', $isDeleted, $isCompleted)''';
   }
 
   static String insertSetQuery(SetW set){
@@ -79,9 +97,15 @@ class DbConstants{
               VALUES('$name', $isCompound)''';
   }
 
+  static String updateExerciseQuery(String name, int isCompound, int exerciseId){
+    return '''UPDATE $EXERCISE_TABLE_NAME
+              SET name = '$name', is_compound = $isCompound
+              WHERE id = $exerciseId''';
+  }
+
   static String insertNewWorkingExerciseQuery(int workoutId){
     return '''INSERT INTO $WORKING_EXERCISE_TABLE_NAME(exercise_id, is_completed, workout_id) 
-              VALUES(-1, -1, $workoutId)''';
+              VALUES(-1, 0, $workoutId)''';
   }
 
   static String endWorkingExerciseQuery(int workingExerciseId, int exerciseId){
@@ -91,7 +115,7 @@ class DbConstants{
               WHERE id = $workingExerciseId''';
   }
 
-  static String endSetFromWorkingExerciseQuery(int setId, int reps, int weight){
+  static String endSetFromWorkingExerciseQuery(int setId, int reps, num weight){
     //todo: add note and exercise id
     DateTime temp = DateTime.now();
     return '''UPDATE $SET_TABLE_NAME
@@ -106,8 +130,14 @@ class DbConstants{
               WHERE id = $workoutId''';
   }
 
+  static String deleteWorkoutQuery(int workoutId){
+    return '''UPDATE $WORKOUT_TABLE_NAME
+              SET is_deleted = 1
+              WHERE id = $workoutId''';
+  }
+
   static String selectWorkingExercisesWithName(int workoutId){
-    return '''SELECT $WORKING_EXERCISE_TABLE_NAME.id, $WORKING_EXERCISE_TABLE_NAME.exercise_id, $WORKING_EXERCISE_TABLE_NAME.workout_id, $EXERCISE_TABLE_NAME.name
+    return '''SELECT $WORKING_EXERCISE_TABLE_NAME.id, $WORKING_EXERCISE_TABLE_NAME.is_completed, $WORKING_EXERCISE_TABLE_NAME.exercise_id, $WORKING_EXERCISE_TABLE_NAME.workout_id, $EXERCISE_TABLE_NAME.name
               FROM $WORKING_EXERCISE_TABLE_NAME
               INNER JOIN $EXERCISE_TABLE_NAME ON $WORKING_EXERCISE_TABLE_NAME.exercise_id=$EXERCISE_TABLE_NAME.id
               WHERE $WORKING_EXERCISE_TABLE_NAME.workout_id=$workoutId''';

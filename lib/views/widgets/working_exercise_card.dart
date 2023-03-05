@@ -8,12 +8,14 @@ import '../../bloc/controller/workout_bloc.dart';
 import '../../data/models/set.dart';
 
 class WorkingExerciseCard extends StatefulWidget {
-  WorkingExerciseCard({Key? key, required this.workingExerciseId, required this.exercises, this.selectedValue}) : super(key: key);
+  WorkingExerciseCard({Key? key, required this.workingExerciseId, required this.exercises, this.selectedValue, required this.isOngoing}) : super(key: key);
 
   final int workingExerciseId;
   String? selectedValue;
   //todo: extract all exercises from DB in constructor in workout page
   List<Exercise> exercises = [];
+  //flag if finish exercise button is pressed yet
+  bool isOngoing;
 
   @override
   State<WorkingExerciseCard> createState() => _WorkingExerciseCardState();
@@ -22,7 +24,6 @@ class WorkingExerciseCard extends StatefulWidget {
 class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
 
   final TextEditingController textEditingController = TextEditingController();
-  // List<SetRow> sets = _getSetRowsFromState(BlocProvider.of<WorkoutBloc>(context).state);
 
   @override
   Widget build(BuildContext context) {
@@ -56,14 +57,14 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
                         ))
                     .toList(),
                 value: widget.selectedValue,
-                onChanged: (value) {
+                onChanged: widget.isOngoing ? (value) {
                   debugPrint("SELECTED EXER : $value");
                   //todo: sent event to modify working exercise
-                  BlocProvider.of<WorkoutBloc>(context).add(ModifyWorkingExerciseEvent(eventType: EventType.modifyWorkingExercise, workingExerciseId: widget.workingExerciseId, exerciseName: value!));
+                  BlocProvider.of<WorkoutBloc>(context).add(ModifyWorkingExerciseEvent(eventType: EventType.modifyWorkingExercise, workingExerciseId: widget.workingExerciseId, exerciseName: value! as String));
                   setState(() {
                     widget.selectedValue = value as String;
                   });
-                },
+                } : null,
                 buttonHeight: 40,
                 buttonWidth: 140,
                 itemHeight: 40,
@@ -115,6 +116,7 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
               padding: const EdgeInsets.only(left: 15),
               child: ListView(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 children: _getSetRowsFromState(BlocProvider.of<WorkoutBloc>(context).state),
               ),
             ),
@@ -126,16 +128,25 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                OutlinedButton(onPressed: () async {
+                OutlinedButton(onPressed: widget.isOngoing ? () async {
                   BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.addSetToWorkingExercise, workingExerciseId: widget.workingExerciseId));
                   await Future.delayed(const Duration(milliseconds: 500));
                   setState(() {});
-                }, child: const Text("Add set")),
+                } : null,
+                child: const Text("Add set")),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: (widget.isOngoing && (widget.selectedValue!=null && widget.selectedValue!='') && _areSetsFinished(BlocProvider.of<WorkoutBloc>(context).state)) ? () {
                     BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkingExercise, workingExerciseId: widget.workingExerciseId));
-                  },
-                  child: const Text("Finish exercise")),
+                    widget.isOngoing = false;
+                    debugPrint('${widget.selectedValue} - active: ${widget.selectedValue!=null || widget.selectedValue!=''}');
+                    setState(() {});
+                  } : null,
+                  child: widget.selectedValue==null || widget.selectedValue==''
+                      ? const Text('Select exercise') :
+                        _areSetsFinished(BlocProvider.of<WorkoutBloc>(context).state) ?
+                          const Text('Finish exercise') :
+                          const Text('Finish sets')
+                ),
               ],
             ),
           ],
@@ -154,9 +165,20 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
     List<SetRow> setRows = [];
     for(SetW set in workoutState.sets){
       if(set.workingExercisesId == widget.workingExerciseId) {
-        setRows.add(SetRow(setId: set.setId, reps: set.reps, weight: set.weight));
+        debugPrint('SET ID: ${set.setId} end: ${set.endTimeOfSet == null}');
+        setRows.add(
+            SetRow(setId: set.setId, reps: set.reps, weight: set.weight, isEnded: set.endTimeOfSet == null ? false : true, sendSetStateToCard: refreshEndExerciseButton,));
       }
     }
     return setRows;
+  }
+
+  bool _areSetsFinished(WorkoutState workoutState){
+    return workoutState.sets
+        .where((element) => element.workingExercisesId == widget.workingExerciseId && element.endTimeOfSet==null).isNotEmpty ? false : true;
+  }
+
+  refreshEndExerciseButton(){
+    setState(() {});
   }
 }

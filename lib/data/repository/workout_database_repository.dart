@@ -35,7 +35,7 @@ class WorkoutDatabaseRepository{
     return WorkingExercise.fromNewInsertMap(insertedWorkingExercise);
   }
 
-  Future<SetW> endSetFromWorkingExercise(int setId, int reps, int weight) async {
+  Future<SetW> endSetFromWorkingExercise(int setId, int reps, num weight) async {
     //todo: add exercise id
     Map<String, Object?> endedSetFromWorkingExercise = await WorkoutDatabaseProvider.endWorkoutSetAndReturn(setId, reps, weight);
     return SetW.fromEndedSetMap(endedSetFromWorkingExercise);
@@ -77,8 +77,16 @@ class WorkoutDatabaseRepository{
     await WorkoutDatabaseProvider.insertExercise(exerciseName, isCompound);
   }
 
+  static void updateExercise(String exerciseName, int isCompound, int exerciseId) async {
+    await WorkoutDatabaseProvider.updateExercise(exerciseName, isCompound, exerciseId);
+  }
+
   static Future<List<Map<String, Object?>>> getAllExerciseFromDBAsMaps() async {
     List<Map<String, Object?>> exerciseInDb = await WorkoutDatabaseProvider.selectAllExercises();
     return exerciseInDb;
+  }
+
+  static Future deleteWorkoutById(int workoutId) async {
+    await WorkoutDatabaseProvider.deleteWorkoutById(workoutId);
   }
 }

@@ -20,52 +20,82 @@ class _WorkoutPageState extends State<WorkoutPage> {
   Widget build(BuildContext context) {
     final pushedWorkoutArgument = ModalRoute.of(context)?.settings.arguments as Map<String, Object?>;
     Workout newInsertedWorkout = Workout.fromNewInsertMap(pushedWorkoutArgument);
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return BlocProvider(
       create: (context) => WorkoutBloc(WorkoutState(workout: newInsertedWorkout)),
       child: Builder(builder: (context)  {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              Constants.titleOfApp,
-              style: TextStyle(color: Colors.black, letterSpacing: 1.5),
-            ),
-            actions: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                  onTap: () async {
-                    BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkout));
-                    //todo: replace with popup to confirm
-                    await Future.delayed(const Duration(milliseconds: 200));
-                    if(BlocProvider.of<WorkoutBloc>(context).state.workout.isCompleted==1) {
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Icon(
-                    Icons.check,
-                    size: 25.0,
+        return WillPopScope(
+          onWillPop: () async { 
+            debugPrint('XD');
+            showDialog(context: context,
+                builder: (context) =>
+                AlertDialog(
+                    title: Text("End workout?"),
+                    content: Text("Are you sure you want to end the workout without saving?"),
+                    actions: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          OutlinedButton(onPressed: (){debugPrint('xd'); Navigator.pop(context); Navigator.pop(context);}, child: Text('yes')),
+                          Padding(padding: EdgeInsets.only(right: 15)),
+                          OutlinedButton(onPressed: (){debugPrint('xd111'); Navigator.pop(context);}, child: Text('no')),
+                        ],
+                      ),
+                    ],
+                ),
+            );
+            return false; 
+            },
+          child: Scaffold(
+            key: scaffoldKey,
+            appBar: AppBar(
+              title: const Text(
+                Constants.titleOfApp,
+                style: TextStyle(color: Colors.black, letterSpacing: 1.5),
+              ),
+              actions: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(right: 20.0),
+                  child: GestureDetector(
+                    onTap: () async {
+                      BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkout));
+                      if(BlocProvider.of<WorkoutBloc>(context).state.workingExercises.isEmpty || BlocProvider.of<WorkoutBloc>(context).state.workingExercises.any((element) => element.isCompleted!=1)){
+                        String textForSnackBar =  BlocProvider.of<WorkoutBloc>(context).state.workingExercises.isEmpty ? 'Add exercises to workout' : 'Finish all exercises';
+                        SnackBar snackBar = SnackBar(
+                          content: Text(textForSnackBar),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                      else {
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Icon(
+                      Icons.check,
+                      size: 35.0,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          // drawer: const Drawer(),
-          body: ListView(
-            key: UniqueKey(),
-            scrollDirection: Axis.vertical,
-            children: _getWorkingExerciseCardsFromState(
-                BlocProvider.of<WorkoutBloc>(context).state),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              BlocProvider.of<WorkoutBloc>(context)
-                  .add(WorkoutEvent(eventType: EventType.addWorkingExercise));
-              await Future.delayed(const Duration(milliseconds: 200));
-              setState(() {});
-            },
-            tooltip: 'Add exercise',
-            child: const Icon(Icons.add),
+              ],
+            ),
+            // drawer: const Drawer(),
+            body: ListView(
+              key: UniqueKey(),
+              scrollDirection: Axis.vertical,
+              children: _getWorkingExerciseCardsFromState(
+                  BlocProvider.of<WorkoutBloc>(context).state),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async {
+                BlocProvider.of<WorkoutBloc>(context)
+                    .add(WorkoutEvent(eventType: EventType.addWorkingExercise));
+                await Future.delayed(const Duration(milliseconds: 200));
+                setState(() {});
+              },
+              tooltip: 'Add exercise',
+              child: const Icon(Icons.add),
+            ),
           ),
         );
       }),
@@ -80,6 +110,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           workingExerciseId: workingExercise.id,
           exercises: workoutState.exercises,
           selectedValue: selectedExercise,
+          isOngoing: workingExercise.isCompleted == 1 ? false : true,
         ),
       );
     }

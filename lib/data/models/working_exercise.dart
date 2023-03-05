@@ -10,16 +10,18 @@ class WorkingExercise{
     id = map['id'] as int;
     exerciseId = map['exercise_id'] as int;
     workoutId = map['workout_id'] as int;
+    isCompleted = map['is_completed'] as int;
   }
 
   WorkingExercise.fromEndedUpdateMap(Map<String, Object?> map){
     id = map['id'] as int;
     exerciseId = map['exercise_id'] as int;
     workoutId = map['workout_id'] as int;
+    isCompleted = map['is_completed'] as int;
   }
 
   @override
   String toString(){
-    return "WorkingExercise{id: $id, exerciseId: $exerciseId, workoutId: $workoutId}";
+    return "WorkingExercise{id: $id, exerciseId: $exerciseId, workoutId: $workoutId, isCompleted: $isCompleted}";
   }
 }

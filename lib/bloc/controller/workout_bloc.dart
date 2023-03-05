@@ -43,7 +43,12 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           //todo: add exercise id
           event = event as EndSetFromWorkingExerciseEvent;
           SetW returnedSet = await _workoutDatabaseRepository.endSetFromWorkingExercise(event.setId!, event.reps, event.weight);
-          debugPrint(returnedSet.toString());
+          for(var i=0; i<state.sets.length ; i++){
+            if(state.sets.elementAt(i).setId == returnedSet.setId){
+              state.sets[i] = returnedSet;
+            }
+          }
+          debugPrint('RE SET: ${returnedSet.toString()}');
           break;
         case EventType.modifyWorkingExercise:
           var event1 = event as ModifyWorkingExerciseEvent;
@@ -56,25 +61,17 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState>{
           debugPrint('state.nameOfWorkingExerciseByName: ${state.nameOfWorkingExerciseByName}');
           break;
         case EventType.endWorkingExercise:
-          // var castedEvent = event as EndWorkingExerciseEvent;
-          // debugPrint("RECEIVED ENDWORKINGEVENT: ${castedEvent.exerciseName}");
-          // int exerciseId = state.exercises.where((e) => e.name==castedEvent.exerciseName).toString() as int;
           int exerciseId = -1;
+          int indexOfWorkingExercise = 0;
           for(WorkingExercise workingExerciseInState in state.workingExercises){
             if(event.workingExerciseId! == workingExerciseInState.id){
               exerciseId = workingExerciseInState.exerciseId;
-            }
-          }
-          WorkingExercise workingExercise = await _workoutDatabaseRepository.endWorkingExercise(event.workingExerciseId!, exerciseId);
-          int indexOfWorkingExercise = 0;
-          for(WorkingExercise workingExerciseInLoop in state.workingExercises){
-            if(workingExerciseInLoop.id == event.workingExerciseId){
               break;
             }
             indexOfWorkingExercise++;
           }
-          state.workingExercises.removeAt(indexOfWorkingExercise);
-          state.workingExercises.insert(indexOfWorkingExercise, workingExercise);
+          WorkingExercise workingExercise = await _workoutDatabaseRepository.endWorkingExercise(event.workingExerciseId!, exerciseId);
+          state.workingExercises[indexOfWorkingExercise] = workingExercise;
           break;
         case EventType.endWorkout:
           Workout endedWorkout = await _workoutDatabaseRepository.endWorkout(state.workout.id!);
@@ -105,7 +102,7 @@ enum EventType{
 
 class ModifySetFromWorkingExerciseEvent extends WorkoutEvent{
   final int reps;
-  final int weight;
+  final num weight;
 
   ModifySetFromWorkingExerciseEvent({required super.eventType, required this.reps, required this.weight, setId}){
     this.setId = setId;
@@ -114,7 +111,7 @@ class ModifySetFromWorkingExerciseEvent extends WorkoutEvent{
 
 class EndSetFromWorkingExerciseEvent extends WorkoutEvent{
   final int reps;
-  final int weight;
+  final num weight;
   
   EndSetFromWorkingExerciseEvent({required super.eventType, required this.reps, required this.weight, setId}){
     this.setId = setId;

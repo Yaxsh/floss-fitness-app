@@ -5,10 +5,10 @@ class SetW{
   late int workingExercisesId; //can add multiple exercises, intended for super sets
   //properties
   late DateTime startTimeOfSet;
-  late DateTime endTimeOfSet;
+  late DateTime? endTimeOfSet;
   late TypeOfSet typeOfSet = TypeOfSet.set;
   late int reps;
-  late int weight;
+  late num weight;
   late String note;
 
   SetW({
@@ -16,6 +16,7 @@ class SetW{
     required this.workingExercisesId
   }){
     startTimeOfSet = DateTime.now();
+    endTimeOfSet = null;
   }
 
   // SetW.regularSet(int workoutId) :
@@ -28,6 +29,7 @@ class SetW{
     setId = map['id'] as int;
     workingExercisesId = map['working_exercises_id'] as int;
     startTimeOfSet = DateTime.parse(map['start_date_time'] as String);
+    endTimeOfSet = null;
     reps = 0;
     weight = 0;
     var writtenValueTypeOfSet = map['type_of_set'] as String;
@@ -49,7 +51,7 @@ class SetW{
     startTimeOfSet = DateTime.parse(map['start_date_time'] as String);
     endTimeOfSet = DateTime.parse(map['end_date_time'] as String);
     reps = map['reps'] as int;
-    weight = map['weight'] as int;
+    weight = map['weight'] as num;
     note = map['note'] as String;
     var writtenValueTypeOfSet = map['type_of_set'] as String;
     switch(writtenValueTypeOfSet){
@@ -68,7 +70,7 @@ class SetW{
   @override
   String toString(){
     return 'Set{setId: $setId, exercisesId: $workingExercisesId, startTimeOfSet: $startTimeOfSet, endTimeOfSet: $endTimeOfSet, typeOfSet: $typeOfSet '
-        'reps: $reps, weight: $weight, note: $note}';
+        'reps: $reps, weight: $weight, note: \$note}';
   }
 }
 

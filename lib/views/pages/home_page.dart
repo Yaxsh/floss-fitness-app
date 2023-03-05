@@ -14,7 +14,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<WorkoutCard> workoutCardList = [];
 
-  //todo: investigate why future is executed 3 times!!
+  /*todo: investigate why future is executed 3 times!!
+  * replacing with better data structure might be more optimal?*/
   List<int> workoutDisplayed = [];
 
   late Workout newWorkout;
@@ -48,26 +49,21 @@ class _HomePageState extends State<HomePage> {
             AsyncSnapshot<List<Map<String, Object?>>> asyncSnap) {
           if (asyncSnap.hasData) {
             //todo: find more efficient way to keep track, state?
-            for (Map<String, Object?> workoutMap in asyncSnap.data!) {
-              if (!workoutDisplayed.contains(workoutMap['id'] as int)) {
-                Workout workoutToBeInserted =
-                    Workout.fromEndUpdateMap(workoutMap);
-                if (workoutCardList.isNotEmpty) {
-                  workoutToBeInserted.startDateTime
-                          .isAfter(workoutCardList.first.workout.startDateTime)
-                      ? workoutCardList.insert(
-                          0, WorkoutCard(workout: workoutToBeInserted))
-                      : workoutCardList
-                          .add(WorkoutCard(workout: workoutToBeInserted));
-                } else {
-                  workoutCardList
-                      .add(WorkoutCard(workout: workoutToBeInserted));
-                }
-                workoutDisplayed.add(workoutMap['id'] as int);
-              }
+            refreshToRebuild();
+            readWorkoutCardsFromData(asyncSnap.data!);
+            if(workoutCardList.isEmpty){
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Add exercises before starting workouts!'),
+                    Padding(padding: EdgeInsets.only(bottom: 10)),
+                    OutlinedButton(onPressed: () {Navigator.pushNamed(context, '/exercises');}, child: Text('Add exercises'))
+                  ],
+                ),
+              );
             }
           } else if (!asyncSnap.hasData) {
-            debugPrint("NO DATA!!!");
             return const Center(child: CircularProgressIndicator());
           }
           return ListView(
@@ -83,11 +79,47 @@ class _HomePageState extends State<HomePage> {
               await WorkoutDatabaseRepository.createAndReturnNewWorkoutInDb(),
           await Navigator.pushNamed(context, '/workout',
               arguments: newWorkout.toMap()),
+          refreshToRebuild(),
+          readWorkoutCardsFromData(await WorkoutDatabaseRepository.getAllFinishedWorkouts()),
           setState(() {})
         },
         tooltip: 'Start new workout',
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  refreshToRebuild(){
+    workoutCardList = [];
+    workoutDisplayed = [];
+    debugPrint('refreshed');
+  }
+
+  readWorkoutCardsFromData(List<Map<String, Object?>> data){
+    debugPrint("readWorkoutCardsFromData building... $workoutDisplayed");
+    for (Map<String, Object?> workoutMap in data) {
+      if (!workoutDisplayed.contains(workoutMap['id'] as int)) {
+        Workout workoutToBeInserted =
+        Workout.fromEndUpdateMap(workoutMap);
+        if (workoutCardList.isNotEmpty) {
+          workoutToBeInserted.startDateTime
+              .isAfter(workoutCardList.first.workout.startDateTime)
+              ? workoutCardList.insert(
+              0, WorkoutCard(workout: workoutToBeInserted, deleteWorkoutFunction: deleteWorkout, indexInHomePage: 0,))
+              : workoutCardList
+              .add(WorkoutCard(workout: workoutToBeInserted, deleteWorkoutFunction: deleteWorkout, indexInHomePage: workoutCardList.length-1,));
+        } else {
+          workoutCardList
+              .add(WorkoutCard(workout: workoutToBeInserted, deleteWorkoutFunction: deleteWorkout, indexInHomePage: workoutCardList.length-1));
+        }
+        workoutDisplayed.add(workoutMap['id'] as int);
+      }
+    }
+  }
+
+  deleteWorkout(int workoutToBeDeleted) async {
+    //todo: format function
+    setState(() {});
+    debugPrint('setstate from deletelworkout@@@!');
   }
 }

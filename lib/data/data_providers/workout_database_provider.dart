@@ -18,21 +18,36 @@ class WorkoutDatabaseProvider{
     String databaseDirectory = await getDatabasesPath();
     String databasePath = join(databaseDirectory, DbConstants.DATABASE_NAME);
     Database database = await openDatabase(
-        databasePath,
-        version: 1,
-        onCreate: _onCreateWorkoutDatabase,
-        //todo: implement onConfigure to enable foreign keys
+      databasePath,
+      version: 2,
+      onCreate: _onCreateWorkoutDatabase,
+      onConfigure: _onConfigureEnableForeignKeys,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        debugPrint('OLD VERSION: $oldVersion NEW VERSION: $newVersion');
+        switch(oldVersion){
+          case 1:
+            //todo: replace with db.batch()
+            db.execute(DbConstants.UPDATE_WORKOUT_TABLE_V2);
+            db.execute(DbConstants.UPDATE_EXISTING_WORKOUT_V2);
+            db.execute(DbConstants.UPDATE_EXERCISE_TABLE_V2);
+            debugPrint('UPDATING EXISTING WORKOUT!!!');
+            break;
+        }
+      }
     );
-
     return database;
   }
 
   Future _onCreateWorkoutDatabase(Database db, int version) async {
+    //todo: replace with batch execution https://github.com/tekartik/sqflite/blob/master/sqflite/doc/migration_example.md#1st-version
     await db.execute(DbConstants.CREATE_WORKOUT_TABLE);
     await db.execute(DbConstants.CREATE_SET_TABLE);
     await db.execute(DbConstants.CREATE_EXERCISE_TABLE);
     await db.execute(DbConstants.CREATE_WORKING_EXERCISE_TABLE);
-    debugPrint("Installing dbs");
+  }
+
+  Future _onConfigureEnableForeignKeys(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
   }
 
   static Future<Map<String, Object?>> insertWorkoutAndReturn() async{
@@ -44,15 +59,14 @@ class WorkoutDatabaseProvider{
 
   static Future<List<Map<String, Object?>>> selectAllWorkouts() async{
     Database db = await instance.database;
-    List<Map<String, Object?>> workouts = await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time', where: 'is_completed = ?', whereArgs: [1]);
+    List<Map<String, Object?>> workouts = await db.query(DbConstants.WORKOUT_TABLE_NAME, orderBy: 'start_date_time', where: 'is_completed = 1 AND is_deleted=0');
+    debugPrint("UPDATED WORKOUT: $workouts");
     return workouts.reversed.toList();
   }
 
   static Future<List<Map<String, Object?>>> selectWorkingExAndJoinName(int workoutId) async{
     Database db = await instance.database;
-    print(DbConstants.selectWorkingExercisesWithName(workoutId));
     List<Map<String, Object?>> wok = await db.rawQuery(DbConstants.selectWorkingExercisesWithName(workoutId));
-    print('WOK: $wok');
     return wok;
   }
 
@@ -105,7 +119,7 @@ class WorkoutDatabaseProvider{
     return workingExercises.last;
   }
 
-  static Future<Map<String, Object?>> endWorkoutSetAndReturn(int setId, int reps, int weight) async {
+  static Future<Map<String, Object?>> endWorkoutSetAndReturn(int setId, int reps, num weight) async {
     Database db = await instance.database;
     await db.rawQuery(DbConstants.endSetFromWorkingExerciseQuery(setId, reps, weight));
     List<Map<String, Object?>> endedSets =  await db.query(DbConstants.SET_TABLE_NAME, where: 'id = ?', whereArgs: [setId]);
@@ -119,9 +133,19 @@ class WorkoutDatabaseProvider{
     return endedWorkouts.last;
   }
 
+  static Future deleteWorkoutById(int workoutId) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.deleteWorkoutQuery(workoutId));
+  }
+
   static insertExercise(String exerciseName, bool isCompound) async {
     Database db = await instance.database;
     await db.rawQuery(DbConstants.insertExerciseQuery(exerciseName, isCompound));
+  }
+
+  static updateExercise(String exerciseName, int isCompound, int exerciseId) async {
+    Database db = await instance.database;
+    await db.rawQuery(DbConstants.updateExerciseQuery(exerciseName, isCompound, exerciseId));
   }
 
   static Future<List<Map<String, Object?>>> selectAllExercises() async {
