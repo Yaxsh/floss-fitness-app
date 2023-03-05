@@ -70,7 +70,7 @@ class SetW{
   @override
   String toString(){
     return 'Set{setId: $setId, exercisesId: $workingExercisesId, startTimeOfSet: $startTimeOfSet, endTimeOfSet: $endTimeOfSet, typeOfSet: $typeOfSet '
-        'reps: $reps, weight: $weight, note: $note}';
+        'reps: $reps, weight: $weight, note: \$note}';
   }
 }
 

@@ -20,6 +20,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   Widget build(BuildContext context) {
     final pushedWorkoutArgument = ModalRoute.of(context)?.settings.arguments as Map<String, Object?>;
     Workout newInsertedWorkout = Workout.fromNewInsertMap(pushedWorkoutArgument);
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return BlocProvider(
       create: (context) => WorkoutBloc(WorkoutState(workout: newInsertedWorkout)),
@@ -47,6 +48,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             return false; 
             },
           child: Scaffold(
+            key: scaffoldKey,
             appBar: AppBar(
               title: const Text(
                 Constants.titleOfApp,
@@ -58,15 +60,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   child: GestureDetector(
                     onTap: () async {
                       BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkout));
-                      //todo: replace with popup to confirm
-                      await Future.delayed(const Duration(milliseconds: 200));
-                      if(BlocProvider.of<WorkoutBloc>(context).state.workout.isCompleted==1) {
+                      if(BlocProvider.of<WorkoutBloc>(context).state.workingExercises.isEmpty || BlocProvider.of<WorkoutBloc>(context).state.workingExercises.any((element) => element.isCompleted!=1)){
+                        String textForSnackBar =  BlocProvider.of<WorkoutBloc>(context).state.workingExercises.isEmpty ? 'Add exercises to workout' : 'Finish all exercises';
+                        SnackBar snackBar = SnackBar(
+                          content: Text(textForSnackBar),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                      else {
                         Navigator.pop(context);
                       }
                     },
                     child: const Icon(
                       Icons.check,
-                      size: 25.0,
+                      size: 35.0,
                     ),
                   ),
                 ),

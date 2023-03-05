@@ -14,6 +14,7 @@ class WorkingExerciseCard extends StatefulWidget {
   String? selectedValue;
   //todo: extract all exercises from DB in constructor in workout page
   List<Exercise> exercises = [];
+  //flag if finish exercise button is pressed yet
   bool isOngoing;
 
   @override
@@ -23,7 +24,6 @@ class WorkingExerciseCard extends StatefulWidget {
 class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
 
   final TextEditingController textEditingController = TextEditingController();
-  // List<SetRow> sets = _getSetRowsFromState(BlocProvider.of<WorkoutBloc>(context).state);
 
   @override
   Widget build(BuildContext context) {
@@ -135,12 +135,18 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
                 } : null,
                 child: const Text("Add set")),
                 ElevatedButton(
-                  onPressed: widget.isOngoing ? () {
+                  onPressed: (widget.isOngoing && (widget.selectedValue!=null && widget.selectedValue!='') && _areSetsFinished(BlocProvider.of<WorkoutBloc>(context).state)) ? () {
                     BlocProvider.of<WorkoutBloc>(context).add(WorkoutEvent(eventType: EventType.endWorkingExercise, workingExerciseId: widget.workingExerciseId));
                     widget.isOngoing = false;
+                    debugPrint('${widget.selectedValue} - active: ${widget.selectedValue!=null || widget.selectedValue!=''}');
                     setState(() {});
                   } : null,
-                  child: const Text("Finish exercise")),
+                  child: widget.selectedValue==null || widget.selectedValue==''
+                      ? const Text('Select exercise') :
+                        _areSetsFinished(BlocProvider.of<WorkoutBloc>(context).state) ?
+                          const Text('Finish exercise') :
+                          const Text('Finish sets')
+                ),
               ],
             ),
           ],
@@ -161,9 +167,18 @@ class _WorkingExerciseCardState extends State<WorkingExerciseCard> {
       if(set.workingExercisesId == widget.workingExerciseId) {
         debugPrint('SET ID: ${set.setId} end: ${set.endTimeOfSet == null}');
         setRows.add(
-            SetRow(setId: set.setId, reps: set.reps, weight: set.weight, isEnded: set.endTimeOfSet == null ? false : true));
+            SetRow(setId: set.setId, reps: set.reps, weight: set.weight, isEnded: set.endTimeOfSet == null ? false : true, sendSetStateToCard: refreshEndExerciseButton,));
       }
     }
     return setRows;
+  }
+
+  bool _areSetsFinished(WorkoutState workoutState){
+    return workoutState.sets
+        .where((element) => element.workingExercisesId == widget.workingExerciseId && element.endTimeOfSet==null).isNotEmpty ? false : true;
+  }
+
+  refreshEndExerciseButton(){
+    setState(() {});
   }
 }

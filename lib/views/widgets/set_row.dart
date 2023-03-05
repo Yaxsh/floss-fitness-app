@@ -6,12 +6,13 @@ import '../../bloc/state/workout_state.dart';
 
 class SetRow extends StatefulWidget {
   //todo: add reps and weight
-  SetRow({Key? key, required this.setId, required this.reps, required this.weight, required this.isEnded}) : super(key: key);
+  SetRow({Key? key, required this.setId, required this.reps, required this.weight, required this.isEnded, required this.sendSetStateToCard}) : super(key: key);
 
   final int setId;
   late int reps;
   late num weight;
   bool isEnded;
+  final Function sendSetStateToCard;
 
   @override
   State<SetRow> createState() => _SetRowState();
@@ -110,6 +111,7 @@ class _SetRowState extends State<SetRow> {
   }
 
   endSet () {
+    //todo: event is sent yet UI is not affected, works after second click
     if(_formKey.currentState!.validate()){
       BlocProvider.of<WorkoutBloc>(context).add(
           EndSetFromWorkingExerciseEvent(
@@ -118,8 +120,8 @@ class _SetRowState extends State<SetRow> {
               weight: double.parse(weightTextController.text),
               setId: widget.setId
           ));
-      widget.isEnded = true;
-      setState(() {});
+      setState(() {widget.isEnded = true;});
+      widget.sendSetStateToCard();
     }
   }
 }
