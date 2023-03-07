@@ -21,7 +21,8 @@ class DbConstants{
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         start_date_time TEXT,
         end_date_time TEXT,
-        is_completed INTEGER NOT NULL
+        is_completed INTEGER NOT NULL,
+        is_deleted INTEGER
   ) ''';
 
   static const String CREATE_SET_TABLE = '''CREATE TABLE $SET_TABLE_NAME(
