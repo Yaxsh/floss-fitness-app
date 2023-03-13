@@ -1,6 +1,12 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:floss_fitness_app/views/widgets/custom_static_widgets.dart';
 import 'package:floss_fitness_app/views/widgets/workout_card.dart';
+import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import '../../const/db_constants.dart';
 import '../../data/models/workout.dart';
 import '../../data/repository/workout_database_repository.dart';
 
@@ -32,14 +38,63 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(top: 15.0),
               child: Align(
                 alignment: Alignment.center,
-                child: GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/exercises');
-                    },
-                    child: Text("Edit exercises")
+                child: FractionallySizedBox(
+                  widthFactor: 0.8,
+                  // heightFactor: 0.1,
+                  child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/exercises');
+                      },
+                      child: Text("Edit exercises")
+                  ),
                 )
               ),
-            )
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: FractionallySizedBox(
+                    widthFactor: 0.8,
+                    // heightFactor: 0.1,
+                    child: OutlinedButton(
+                        onPressed: () {
+                          //todo: implement new screen for body weight
+                          debugPrint('TODO: IMPLEMENT NEW PAGE FOR WEIGHT');
+                        },
+                        child: const Text("TODO: Track body weight")
+                    ),
+                  )
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: FractionallySizedBox(
+                    widthFactor: 0.8,
+                    // heightFactor: 0.1,
+                    child: OutlinedButton(
+                        onPressed: exportDB,
+                        child: const Text("Export db")
+                    ),
+                  )
+              ),
+            ),
+            // Padding(
+            //   padding: EdgeInsets.only(top: 10.0),
+            //   child: Align(
+            //       alignment: Alignment.center,
+            //       child: FractionallySizedBox(
+            //         widthFactor: 0.8,
+            //         // heightFactor: 0.1,
+            //         child: OutlinedButton(
+            //             onPressed: importDB,
+            //             child: const Text("Import db")
+            //         ),
+            //       )
+            //   ),
+            // )
           ],
         ),
       ),
@@ -52,13 +107,15 @@ class _HomePageState extends State<HomePage> {
             refreshToRebuild();
             readWorkoutCardsFromData(asyncSnap.data!);
             if(workoutCardList.isEmpty){
+            //todo: check if exercises are present in table: FutureBuilder
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text('Add exercises before starting workouts!'),
                     Padding(padding: EdgeInsets.only(bottom: 10)),
-                    OutlinedButton(onPressed: () {Navigator.pushNamed(context, '/exercises');}, child: Text('Add exercises'))
+                    OutlinedButton(onPressed: () {Navigator.pushNamed(context, '/exercises');}, child: Text('Add exercises')),
+                    OutlinedButton(onPressed: importDB, child: Text('Import DB'))
                   ],
                 ),
               );
@@ -121,5 +178,26 @@ class _HomePageState extends State<HomePage> {
     //todo: format function
     setState(() {});
     debugPrint('setstate from deletelworkout@@@!');
+  }
+
+  exportDB() async {
+    //todo: export func to util class and use in settings as well
+    String databaseDirectory = await getDatabasesPath();
+    String databasePath = join(databaseDirectory, DbConstants.DATABASE_NAME);
+    debugPrint(databasePath);
+    File dbFile = File(databasePath);
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    debugPrint('DIR: $selectedDirectory');
+    dbFile.copy('$selectedDirectory/fitnelly-recovery-${DateFormat('dd-MM-yyyy').format(DateTime.now())}.db');
+  }
+
+  importDB() async {
+    //todo: export func to util class and use in settings as well
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      File backupFile = File(result.files.single.path!);
+      backupFile.copy('/data/user/0/com.example.floss_fitness_app/databases/fitnelly.db');
+      setState(() {});
+    }
   }
 }

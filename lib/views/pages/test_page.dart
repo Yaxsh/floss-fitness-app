@@ -1,9 +1,9 @@
-import 'dart:convert';
+import 'dart:io';
 
-import 'package:floss_fitness_app/data/data_providers/workout_database_provider.dart';
-import 'package:floss_fitness_app/data/repository/workout_database_repository.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:floss_fitness_app/views/widgets/custom_static_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../data/models/workout.dart';
 
 class TestPage extends StatefulWidget {
@@ -14,40 +14,69 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
-
   late Workout res;
 
   @override
   Widget build(BuildContext context) {
-
-    // final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, Object?>;
-    // print(arguments.toString());
-    // print(arguments['start_date_time']);
-
     return Scaffold(
       appBar: CustomWidgets.getAppBar(),
       drawer: const Drawer(),
-      body: Center(
-        child: FutureBuilder<List<Map<String, Object?>>>(
-          future: WorkoutDatabaseProvider.selectWorkingExAndJoinName(53),
-          builder: (BuildContext buildContext, AsyncSnapshot<List<Map<String, Object?>>> asyncSnap){
-            if(!asyncSnap.hasData){
-              return const Center(child: Text("no data!!"),);
-            }
-            else{
-              return Center(child: Text(asyncSnap.data.toString()));
-            }
-          },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async => {
-          res = await WorkoutDatabaseRepository.createAndReturnNewWorkoutInDb(),
-          debugPrint(res.toString()),
+      body: FutureBuilder(
+        future: Future.wait([
+          Permission.manageExternalStorage.request(),
+          // Permission.storage.request(),
+          // Permission.accessMediaLocation.request()
+        ]),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.hasData) {
+            //storage manageExternalStorage accessMediaLocation
+            return Center(
+              child: Text(snapshot.data!.toString()),
+            );
+          } else {
+            return const Center(
+              child: Text('have perm'),
+            );
+          }
         },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
+      floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+        FloatingActionButton(
+          onPressed: () async => {
+            tst(),
+            debugPrint('XD'),
+          },
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+        ),
+        Padding(padding: EdgeInsets.only(right: 10)),
+        FloatingActionButton(
+          onPressed: () async => {
+            tst1(),
+            debugPrint('XD1'),
+          },
+          tooltip: 'Increment',
+          child: const Icon(Icons.inbox),
+        ),
+      ]),
     );
+  }
+
+  tst() async {
+    ///data/user/0/com.example.floss_fitness_app/databases/fitnelly.db
+    File dbFile = File(
+        '/data/user/0/com.example.floss_fitness_app/databases/fitnelly.db');
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    debugPrint('DIR: $selectedDirectory');
+    dbFile.copy('$selectedDirectory/fitnelly-tst.db');
+  }
+
+  tst1() async{
+    ///storage/emulated/0/Fitnelly/fitnelly-tst.db
+    File dbFile = File(
+        '/storage/emulated/0/Fitnelly/fitnelly-tst.db');
+    dbFile.copy('/data/user/0/com.example.floss_fitness_app/databases/fitnelly.db');
   }
 }
