@@ -81,20 +81,20 @@ class _HomePageState extends State<HomePage> {
                   )
               ),
             ),
-            // Padding(
-            //   padding: EdgeInsets.only(top: 10.0),
-            //   child: Align(
-            //       alignment: Alignment.center,
-            //       child: FractionallySizedBox(
-            //         widthFactor: 0.8,
-            //         // heightFactor: 0.1,
-            //         child: OutlinedButton(
-            //             onPressed: importDB,
-            //             child: const Text("Import db")
-            //         ),
-            //       )
-            //   ),
-            // )
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: FractionallySizedBox(
+                    widthFactor: 0.8,
+                    // heightFactor: 0.1,
+                    child: OutlinedButton(
+                        onPressed: importDB,
+                        child: const Text("Import db")
+                    ),
+                  )
+              ),
+            )
           ],
         ),
       ),
