@@ -24,7 +24,7 @@ class _TestPageState extends State<TestPage> {
       body: FutureBuilder(
         future: Future.wait([
           Permission.manageExternalStorage.request(),
-          // Permission.storage.request(),
+          Permission.storage.request(),
           // Permission.accessMediaLocation.request()
         ]),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -49,6 +49,7 @@ class _TestPageState extends State<TestPage> {
             debugPrint('XD'),
           },
           tooltip: 'Increment',
+          heroTag: "btn1",
           child: const Icon(Icons.add),
         ),
         Padding(padding: EdgeInsets.only(right: 10)),
@@ -58,6 +59,7 @@ class _TestPageState extends State<TestPage> {
             debugPrint('XD1'),
           },
           tooltip: 'Increment',
+          heroTag: "btn2",
           child: const Icon(Icons.inbox),
         ),
       ]),

@@ -5,6 +5,7 @@ import 'package:floss_fitness_app/views/widgets/custom_static_widgets.dart';
 import 'package:floss_fitness_app/views/widgets/workout_card.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../const/db_constants.dart';
 import '../../data/models/workout.dart';
@@ -37,18 +38,16 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: EdgeInsets.only(top: 15.0),
               child: Align(
-                alignment: Alignment.center,
-                child: FractionallySizedBox(
-                  widthFactor: 0.8,
-                  // heightFactor: 0.1,
-                  child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/exercises');
-                      },
-                      child: Text("Edit exercises")
-                  ),
-                )
-              ),
+                  alignment: Alignment.center,
+                  child: FractionallySizedBox(
+                    widthFactor: 0.8,
+                    // heightFactor: 0.1,
+                    child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/exercises');
+                        },
+                        child: Text("Edit exercises")),
+                  )),
             ),
             Padding(
               padding: EdgeInsets.only(top: 10.0),
@@ -62,10 +61,8 @@ class _HomePageState extends State<HomePage> {
                           //todo: implement new screen for body weight
                           debugPrint('TODO: IMPLEMENT NEW PAGE FOR WEIGHT');
                         },
-                        child: const Text("TODO: Track body weight")
-                    ),
-                  )
-              ),
+                        child: const Text("TODO: Track body weight")),
+                  )),
             ),
             Padding(
               padding: EdgeInsets.only(top: 10.0),
@@ -76,10 +73,8 @@ class _HomePageState extends State<HomePage> {
                     // heightFactor: 0.1,
                     child: OutlinedButton(
                         onPressed: exportDB,
-                        child: const Text("Export db")
-                    ),
-                  )
-              ),
+                        child: const Text("Export db")),
+                  )),
             ),
             Padding(
               padding: EdgeInsets.only(top: 10.0),
@@ -90,11 +85,50 @@ class _HomePageState extends State<HomePage> {
                     // heightFactor: 0.1,
                     child: OutlinedButton(
                         onPressed: importDB,
-                        child: const Text("Import db")
-                    ),
-                  )
-              ),
+                        child: const Text("Import db")),
+                  )),
             )
+            // FutureBuilder(
+            //     future: Future.wait([
+            //       Permission.manageExternalStorage.request(),
+            //       Permission.storage.request(),
+            //       // Permission.accessMediaLocation.request()
+            //     ]),
+            //     builder:(BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            //       if(snapshot.hasData) {
+            //         return ListView(
+            //           children: [
+            //             Padding(
+            //               padding: EdgeInsets.only(top: 10.0),
+            //               child: Align(
+            //                   alignment: Alignment.center,
+            //                   child: FractionallySizedBox(
+            //                     widthFactor: 0.8,
+            //                     // heightFactor: 0.1,
+            //                     child: OutlinedButton(
+            //                         onPressed: exportDB,
+            //                         child: const Text("Export db")),
+            //                   )),
+            //             ),
+            //             Padding(
+            //               padding: EdgeInsets.only(top: 10.0),
+            //               child: Align(
+            //                   alignment: Alignment.center,
+            //                   child: FractionallySizedBox(
+            //                     widthFactor: 0.8,
+            //                     // heightFactor: 0.1,
+            //                     child: OutlinedButton(
+            //                         onPressed: importDB,
+            //                         child: const Text("Import db")),
+            //                   )),
+            //             )
+            //           ],
+            //         );
+            //       }
+            //       else{
+            //         return Container();
+            //       }
+            //     }),
           ],
         ),
       ),
@@ -106,16 +140,21 @@ class _HomePageState extends State<HomePage> {
             //todo: find more efficient way to keep track, state?
             refreshToRebuild();
             readWorkoutCardsFromData(asyncSnap.data!);
-            if(workoutCardList.isEmpty){
-            //todo: check if exercises are present in table: FutureBuilder
+            if (workoutCardList.isEmpty) {
+              //todo: check if exercises are present in table: FutureBuilder
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text('Add exercises before starting workouts!'),
                     Padding(padding: EdgeInsets.only(bottom: 10)),
-                    OutlinedButton(onPressed: () {Navigator.pushNamed(context, '/exercises');}, child: Text('Add exercises')),
-                    OutlinedButton(onPressed: importDB, child: Text('Import DB'))
+                    OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/exercises');
+                        },
+                        child: Text('Add exercises')),
+                    OutlinedButton(
+                        onPressed: importDB, child: Text('Import DB'))
                   ],
                 ),
               );
@@ -137,7 +176,8 @@ class _HomePageState extends State<HomePage> {
           await Navigator.pushNamed(context, '/workout',
               arguments: newWorkout.toMap()),
           refreshToRebuild(),
-          readWorkoutCardsFromData(await WorkoutDatabaseRepository.getAllFinishedWorkouts()),
+          readWorkoutCardsFromData(
+              await WorkoutDatabaseRepository.getAllFinishedWorkouts()),
           setState(() {})
         },
         tooltip: 'Start new workout',
@@ -146,28 +186,37 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  refreshToRebuild(){
+  refreshToRebuild() {
     workoutCardList = [];
     workoutDisplayed = [];
     debugPrint('refreshed');
   }
 
-  readWorkoutCardsFromData(List<Map<String, Object?>> data){
+  readWorkoutCardsFromData(List<Map<String, Object?>> data) {
     debugPrint("readWorkoutCardsFromData building... $workoutDisplayed");
     for (Map<String, Object?> workoutMap in data) {
       if (!workoutDisplayed.contains(workoutMap['id'] as int)) {
-        Workout workoutToBeInserted =
-        Workout.fromEndUpdateMap(workoutMap);
+        Workout workoutToBeInserted = Workout.fromEndUpdateMap(workoutMap);
         if (workoutCardList.isNotEmpty) {
           workoutToBeInserted.startDateTime
-              .isAfter(workoutCardList.first.workout.startDateTime)
+                  .isAfter(workoutCardList.first.workout.startDateTime)
               ? workoutCardList.insert(
-              0, WorkoutCard(workout: workoutToBeInserted, deleteWorkoutFunction: deleteWorkout, indexInHomePage: 0,))
-              : workoutCardList
-              .add(WorkoutCard(workout: workoutToBeInserted, deleteWorkoutFunction: deleteWorkout, indexInHomePage: workoutCardList.length-1,));
+                  0,
+                  WorkoutCard(
+                    workout: workoutToBeInserted,
+                    deleteWorkoutFunction: deleteWorkout,
+                    indexInHomePage: 0,
+                  ))
+              : workoutCardList.add(WorkoutCard(
+                  workout: workoutToBeInserted,
+                  deleteWorkoutFunction: deleteWorkout,
+                  indexInHomePage: workoutCardList.length - 1,
+                ));
         } else {
-          workoutCardList
-              .add(WorkoutCard(workout: workoutToBeInserted, deleteWorkoutFunction: deleteWorkout, indexInHomePage: workoutCardList.length-1));
+          workoutCardList.add(WorkoutCard(
+              workout: workoutToBeInserted,
+              deleteWorkoutFunction: deleteWorkout,
+              indexInHomePage: workoutCardList.length - 1));
         }
         workoutDisplayed.add(workoutMap['id'] as int);
       }
@@ -188,7 +237,15 @@ class _HomePageState extends State<HomePage> {
     File dbFile = File(databasePath);
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
     debugPrint('DIR: $selectedDirectory');
-    dbFile.copy('$selectedDirectory/fitnelly-recovery-${DateFormat('dd-MM-yyyy').format(DateTime.now())}.db');
+    debugPrint(
+        'output: $selectedDirectory/fitnelly-recovery-${DateFormat('dd-MM-yyyy').format(DateTime.now())}.db');
+    File existing = File(
+        '$selectedDirectory/fitnelly-recovery-${DateFormat('dd-MM-yyyy').format(DateTime.now())}.db');
+    if (await existing.exists()) {
+      existing.delete();
+    }
+    dbFile.copy(
+        '$selectedDirectory/fitnelly-recovery-${DateFormat('dd-MM-yyyy').format(DateTime.now())}.db');
   }
 
   importDB() async {
@@ -196,7 +253,8 @@ class _HomePageState extends State<HomePage> {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       File backupFile = File(result.files.single.path!);
-      backupFile.copy('/data/user/0/com.example.floss_fitness_app/databases/fitnelly.db');
+      backupFile.copy(
+          '/data/user/0/com.example.floss_fitness_app/databases/fitnelly.db');
       setState(() {});
     }
   }
